@@ -1,13 +1,26 @@
 FROM alpine:3.10
 
-RUN apk add --update nodejs npm git mysql
-RUN addgroup -S node && adduser -S node -G node
-WORKDIR /home/node/
+RUN apk add --no-cache --update nodejs npm \
+    git mysql mysql-client
 
-COPY runapp.sh /home/node
-RUN chmod +x /home/node/runapp.sh
+RUN chown mysql:root -R /var/lib/mysql
+RUN chgrp mysql -R /var/lib/mysql
+RUN mkdir -p /run/mysqld 
+RUN chown mysql:root /run/mysqld
+RUN /usr/bin/mysql_install_db --user=mysql --ldata=/var/lib/mysql
 
-USER node
+# RUN sed -i 's/#bind-address/bind-address/g' /etc/my.cnf.d/mariadb-server.cnf
+RUN sed -i 's/skip-networking/#skip-networking/g' /etc/my.cnf.d/mariadb-server.cnf
+
+
+RUN mkdir /code
+WORKDIR /code
+COPY set_privileges.sql /code/set_privileges.sql
+
+# Copy the starting app
+COPY runapp.sh /code
+RUN chmod +x /code/runapp.sh
 
 # Start the application
-CMD ["/home/node/runapp.sh"]
+ENTRYPOINT [ "/code/runapp.sh"]
+EXPOSE 3001 3000
