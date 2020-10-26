@@ -1,0 +1,1 @@
+grant all privileges on FiestaDB.* to fiesta@localhost identified by 'fiesta';
