@@ -1,6 +1,7 @@
 #!/bin/sh
+
+# Start the mysql daemon
 /usr/bin/mysqld --user=mysql &
-/usr/bin/mysqladmin -u root password 'nutanix/4u'
 
 # Get the Fiesta code into the system
 git clone https://github.com/sharonpamela/Fiesta.git /code/Fiesta
@@ -16,6 +17,9 @@ sed -i 's/REPLACE_DB_PASSWORD/fiesta/g' /code/Fiesta/config/config.js
 # Get data in to the MariaDB
 /usr/bin/mysql -uroot < /code/Fiesta/seeders/FiestaDB-mySQL.sql
 /usr/bin/mysql -uroot < /code/set_privileges.sql
+
+# Set the MySQL root password
+/usr/bin/mysqladmin -u root password 'nutanix/4u'
 
 npm install -g nodemon
 

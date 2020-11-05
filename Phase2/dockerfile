@@ -9,6 +9,9 @@ RUN mkdir /code
 WORKDIR /code
 COPY set_privileges.sql /code/set_privileges.sql
 
+# Copy the needed Python files
+COPY python /code
+
 # Copy the starting app
 COPY runapp.sh /code
 RUN chmod +x /code/runapp.sh

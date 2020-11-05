@@ -1,0 +1,155 @@
+version: "3"
+
+# Define the network
+networks:
+  gitea:
+
+services:
+
+# Start the Gitea server
+  gitea:
+    image: gitea/gitea:latest
+    container_name: gitea
+    environment:
+      - USER_UID=1001
+      - USER_GID=1001
+      - DB_TYPE=mysql
+      - DB_HOST=db:3306
+      - DB_NAME=gitea
+      - DB_USER=gitea
+      - DB_PASSWD=gitea
+    restart: always
+    networks:
+      - gitea
+    volumes:
+      - /gitea:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+       - "3000:3000"
+       - "2222:22"
+    depends_on:
+      - db
+
+# Start the MySQL server for Gitea
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=gitea
+      - MYSQL_USER=gitea
+      - MYSQL_PASSWORD=gitea
+      - MYSQL_DATABASE=gitea
+    networks:
+      - gitea
+    volumes:
+     - /gitea/mysql:/var/lib/mysql
+    depends_on:
+     - nginx
+
+# Start the Drone server
+  drone-server:
+    image: drone/drone:latest
+    #image: ruanbekker/drone-server:basic-auth-1.2.1
+    container_name: drone-server
+    ports:
+      - 8080:80
+      - 9000
+    volumes:
+      - /gitea/drone/server:/var/lib/drone/
+    restart: always
+    depends_on:
+      - gitea
+      - docker-registry
+    environment:
+      - DRONE_OPEN=true
+      - DRONE_GITEA=true
+      - DRONE_NETWORK=gitea
+      - DRONE_GITEA_SERVER=https://10.42.74.57:3000
+      - DRONE_GITEA_SKIP_VERIFY=true
+      - DRONE_GIT_ALWAYS_AUTH=true
+      - DRONE_GITEA_CLIENT_ID=c394e95d-cf86-4155-82d8-e82e4131fc7e
+      - DRONE_GITEA_CLIENT_SECRET=LZ2B1D0a7dCjX1wfcCZjJJ1zqIlhtT4CY9E3SGCE2zc=
+      - DRONE_RPC_SECRET=9c3921e3e748aff725d2e16ef31fbc42
+      - DRONE_SERVER_HOST=10.42.74.57:8080
+      - DRONE_SERVER_PROTO=http
+      - DRONE_TLS_AUTOCERT=false
+      - DRONE_AGENTS_ENABLED=true
+      - DRONE_USER_CREATE=username:wessenstam,admin:true
+    networks:
+      - gitea
+
+# Start the drone docker runner
+  drone-docker-runner:
+    image: drone/drone-runner-docker:latest
+    container_name: drone-runner-docker
+    command: runner
+    restart: always
+    depends_on:
+      - drone-server
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /gitea/drone/agent:/data
+    environment:
+      - DRONE_RPC_HOST=10.42.74.57:8080
+      - DRONE_RPC_PROTO=http
+      - DRONE_RPC_SECRET=9c3921e3e748aff725d2e16ef31fbc42
+      - DRONE_RUNNER_CAPACITY=1
+      - DRONE_RUNNER_NETWORKS=gitea
+      - DRONE_RUNNER_VOLUMES=/gitea/drone/agent:/data
+    networks:
+      - gitea
+
+
+# Start the Docker registry
+  docker-registry:
+    image: registry:latest
+    ports:
+      - 5000:5000
+    restart: always
+    container_name: docker-registry
+    environment:
+      - REGISTRY_AUTH=htpasswd
+      - REGISTRY_AUTH_HTPASSWD_REALM=Registry-Realm
+      - REGISTRY_AUTH_HTPASSWD_PATH=/auth/registry.passwd
+    volumes:
+      - /gitea/docker_reg/data:/var/lib/registry
+      - /gitea/haproxy/ssl:/certs
+      - /gitea/auth:/auth
+    networks:
+      - gitea
+
+# Docker Registry UI read/only
+  docker-registry-ui:
+    image: parabuzzle/craneoperator:latest
+    ports:
+      - "8081:80"
+    environment:
+      - REGISTRY_HOST=10.42.74.57
+      - REGISTRY_PORT=5000
+      - REGISTRY_PROTOCOL=http
+      - REGISTRY_USERNAME=nutanix
+      - REGISTRY_PASSWORD=nutanix/4u
+      - SSL_VERIFY=false
+      - USERNAME=admin
+      - PASSWORD=nutanix
+    restart: always
+    depends_on:
+      - docker-registry
+    networks:
+      - gitea
+
+# Start the NGINX HTTPS Proxy server for the Docker Registry
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /gitea/nginx/conf.d/:/etc/nginx/conf.d/
+      - /gitea/nginx/ssl/:/etc/nginx/ssl/
+    networks:
+      - gitea
