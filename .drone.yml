@@ -1,0 +1,88 @@
+kind: pipeline
+name: default
+
+clone:
+  skip_verify: true
+
+steps:
+
+  - name: build test image
+    image: docker:latest
+    pull: if-not-exists
+    volumes:
+      - name: docker_sock
+        path: /var/run/docker.sock
+    commands:
+      - docker build -t 10.42.74.57/test:${DRONE_COMMIT_SHA:0:6} .
+
+  - name: Test built container
+    image: 10.42.74.57/test:${DRONE_COMMIT_SHA:0:6}
+    pull: if-not-exists
+    environment:
+      USERNAME:
+        from_secret: docker_username
+      PASSWORD:
+        from_secret: docker_password
+      DB_SERVER: 10.42.74.10
+      DB_PASSWD: nutanix/4u
+      DB_USER: sa
+      DB_TYPE: mssql
+      FIESTA_USER: fiesta
+    commands:
+      - npm version
+      - if [ "${DB_TYPE}" = "mysql" ]; then mysql --version; fi
+      - git clone https://github.com/sharonpamela/Fiesta.git /code/Fiesta
+      - if [ `echo $DB_PASSWD | grep "/" | wc -l` -gt 0 ]; then DB_PASSWD=$(echo "${DB_PASSWD//\//\\/}"); fi
+      - sed -i 's/REPLACE_DB_NAME/FiestaDB/g' /code/Fiesta/config/config.js
+      - sed -i "s/REPLACE_DB_HOST_ADDRESS/$DB_SERVER/g" /code/Fiesta/config/config.js
+      - sed -i "s/REPLACE_DB_DIALECT/$DB_TYPE/g" /code/Fiesta/config/config.js
+      - sed -i "s/DB_DOMAIN_NAME/LOCALHOST/g" /code/Fiesta/config/config.js
+      - sed -i "s/REPLACE_DB_USER_NAME/$FIESTA_USER/g" /code/Fiesta/config/config.js
+      - sed -i "s/REPLACE_DB_PASSWORD/$DB_PASSWD/g" /code/Fiesta/config/config.js
+
+  - name: Push to Local Repo
+    image: docker:latest
+    pull: if-not-exists
+    environment:
+      USERNAME:
+        from_secret: docker_username
+      PASSWORD:
+        from_secret: docker_password
+    volumes:
+      - name: docker_sock
+        path: /var/run/docker.sock
+    commands:
+      - docker login -u $USERNAME -p $PASSWORD 10.42.74.57
+      - docker image tag 10.42.74.57/test:${DRONE_COMMIT_SHA:0:6} 10.42.74.57/test:latest
+      - docker push 10.42.74.57/test:${DRONE_COMMIT_SHA:0:6}
+      - docker push 10.42.74.57/test:latest
+
+  - name: Deploy newest image
+    image: docker:latest
+    environment:
+      USERNAME:
+        from_secret: docker_username
+      PASSWORD:
+        from_secret: docker_password
+      DB_SERVER:
+        from_secret: db_server
+      DB_PASSWD:
+        from_secret: db_passwd
+      DB_USER: 
+        from_secret: db_user
+      DB_TYPE: 
+        from_secret: db_type
+    volumes:
+      - name: docker_sock
+        path: /var/run/docker.sock
+    commands:
+      - docker login -u $USERNAME -p $PASSWORD 10.42.74.57
+      - docker pull 10.42.74.57/test:latest
+      - if [ `docker ps | grep testFiestaDB | wc -l` -eq 1 ]; then echo "Stopping existing Docker Container...."; docker stop testFiestaDB; else echo "Docker container has not been found..."; fi
+      - sleep 10
+      - docker run --name testFiestaDB --rm -p 2000:3000 -p 2001:3001 -d -e DB_SERVER=$DB_SERVER -e DB_USER=$DB_USER -e DB_TYPE=$DB_TYPE -e FIESTA_USER=$DB_USER -e DB_PASSWD=$DB_PASSWD 10.42.74.57/test:latest
+    
+volumes:
+- name: docker_sock
+  host:
+    path: /var/run/docker.sock
