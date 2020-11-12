@@ -1,0 +1,39 @@
+# Docker file for MariaDB creating the npm multi step container
+# This dockerfile multi step is to start the container faster as the runapp.sh doesn't have to run all npm steps
+# MariaDB is external to the container
+
+FROM alpine:3.11 as bases
+
+RUN apk add --no-cache --update nodejs npm git
+
+RUN mkdir /code
+WORKDIR /code
+
+# Get the Fiesta Applicaiton in the container
+RUN git clone https://github.com/sharonpamela/Fiesta.git /code/Fiesta
+
+# Get ready to build the application
+RUN cd /code/Fiesta && npm install
+RUN cd /code/Fiesta/client && npm install
+RUN cd /code/Fiesta/client && npm audit fix 
+RUN cd /code/Fiesta/client && npm fund 
+RUN cd /code/Fiesta/client && npm update
+RUN cd /code/Fiesta/client && npm run build
+
+FROM alpine:3.11 as Final_Image
+
+RUN apk add --no-cache --update nodejs npm git curl
+
+# Get the NMP part compiled
+RUN npm install -g nodemon
+
+# Copy the earlier created applicaiton from the first step into the new container
+COPY --from=bases /code /code
+
+# Copy the starting app
+COPY runapp.sh /code
+RUN chmod +x /code/runapp.sh
+
+# Start the application
+ENTRYPOINT [ "/code/runapp.sh"]
+EXPOSE 3001 3000

@@ -9,19 +9,6 @@ CREATE DATABASE FiestaDB
 GO
 
 --
--- Creating the needed Login and rights
---
-
-USE master;
-CREATE LOGIN fiesta WITH PASSWORD = REPLACE_DB_PASSWD;
-GO
-USE FiestaDB;
-GO
-CREATE USER fiesta from LOGIN fiesta;
-GRANT SELECT, INSERT, DELETE, UPDATE ON DATABASE::FiestaDB TO fiesta;
-GO
-
---
 -- Table structure for table `products`
 --
 
@@ -33,7 +20,7 @@ CREATE TABLE Products (
   [product_image_url] varchar(max) NOT NULL,
   [product_comment] varchar(255) DEFAULT NULL,
 );
-
+GO
 --
 -- Dumping data for table `products`
 --
@@ -59,7 +46,7 @@ CREATE TABLE Stores (
   [store_city] varchar(255) NOT NULL,
   [store_state] varchar(255) NOT NULL,
 )   ;
-
+GO
 --
 -- Dumping data for table `stores`
 --

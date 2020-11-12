@@ -1,6 +1,53 @@
-# Explanation
+# Explanation of files
 
-The docker-compose.yaml file builds:
+This repo is having the needed files for the following scenarios:
+
+1. Refactor the Fiesta App into a container
+2. Change the container to start faster
+3. Build a CI/CD pipeline
+4. Build, store and deploy the changed dockerfile using the CI/CD
+5. Change the Deployment to be a karbon cluster
+
+# File location
+
+- mariadb
+
+    This folder contains all the needed files to start building the refactoring for MariaDB environment
+
+- mssql
+
+    This folder contains all the needed files to start building the refactoring for MSSQL environment
+
+- docker_files
+
+    This folder holds all the needed files to build the CI/CE infrastructure using docker containers
+## Refactor the Fiesta App
+
+This first step is to show how to build a container using the command line. The following files need to be used:
+
+1. dockerfile.mariadb
+2. runapp_mariadb.sh
+3. set_priveleges.sql
+
+### Goal
+
+Get an understanding of how to build a container from an existing application and the impact of refactoring on an organisation. This by using the command line, manual commands
+
+## Change to container to start faster
+
+Due to the long start, because of the npm stuff that needs to be run (from npom install to nom build), the build of a new container (image) makes the start way faster. The following files need to be used:
+
+1. dockerfile.npm
+2. runapp_npm_container.sh
+3. set_privileges.sql
+
+### Goal
+
+Get an understanding what multi step creation of an image impacts, not just the time to start an app, but also the size.
+
+## Build CI/CD Pipeline
+
+Building a CI/CD Pipeline is being used by organisations to speed up the tedious tasks of building, testing, storing and deploying containers in Dev and Prod environments. The file to be used is the docker-compose.yml file. This docker-compose.yaml file builds:
 
 1. A Database (MySQL) for the Gitea environment
 2. Gitea itself (https://gitea.io)
@@ -8,119 +55,73 @@ The docker-compose.yaml file builds:
 4. Drone.io Docker runner
 5. Docker registry in http (https://docs.docker.com/registry/)
 6. Docker Registry UI using Crane (https://hub.docker.com/r/parabuzzle/craneoperator)
-7. Nginx server for HTTPS proxy for Docker Registry (https://phoenixnap.com/kb/set-up-a-private-docker-registry use `sudo yum install -y httpd-tools` to install the `htpasswd` command and https://www.rosehosting.com/blog/how-to-generate-a-self-signed-ssl-certificate-on-linux/ for SSL certs for NGINX)
+7. Nginx server for HTTPS proxy for Docker Registry 
 
-## Requirements
+After the docker containers are running, some small changes need to be made to the "infrastructure" to get it running. 
+1. For getting https access to the Docker registry :
+   
+    - https://phoenixnap.com/kb/set-up-a-private-docker-registry use `sudo yum install -y httpd-tools` to install the `htpasswd` command
+    - https://www.rosehosting.com/blog/how-to-generate-a-self-signed-ssl-certificate-on-linux/ for SSL certs for NGINX
 
-The following needs to be installed on the machine to run the environment:
-1. Installation of docker
-2. Installation of docker-compose
+2. For Gitea to get https support, and not http (default)
+    
+    - https://docs.gitea.io/en-us/https-setup/
 
-## Extra installation steps
+3. Docker on the VM where docker-compose.yml is to be "run"
 
-This part describes what needs to be done after the containers are running
+    - https://docs.docker.com/registry/insecure/
 
-### Extra volumes for the containers
-The containers are using external volumes. The root is under `/gitea` and the containers are using paths under `/gitea` to store applicaiton data so at restart of the container the data, configuration and other needed files are not deleted. The tree under /gitea looks like this:
+4. Physical machine; as we use self signed certificates, git doesn't allow pull and paush to Gitea. To fix that, follow https://confluence.atlassian.com/fishkb/unable-to-clone-git-repository-due-to-self-signed-certificate-376838977.html
 
-	root [~]$ tree -L 2 -d /gitea
-	/gitea
-	|-- auth
-	|-- docker_reg
-	|   `-- data
-	|-- drone
-	|   |-- agent
-	|   `-- server
-	|-- git
-	|   |-- lfs
-	|   `-- repositories
-	|-- gitea
-	|   |-- attachments
-	|   |-- avatars
-	|   |-- conf
-	|   |-- indexers
-	|   |-- log
-	|   |-- queues
-	|   |-- repo-avatars
-	|   `-- sessions
-	|-- haproxy
-	|   `-- ssl
-	|-- mysql
-	|   |-- gitea
-	|   |-- mysql
-	|   |-- performance_schema
-	|   `-- sys
-	|-- nginx
-	|   |-- conf.d
-	|   `-- ssl
-	`-- ssh
+More deatiled information can be found here <docker_files/README.md>.
+
+### Goal
+
+Understand a possible CI/CD solution for an organisation. What is takes to build one and how to use it.
+
+## Build, store and deploy the changed dockerfile using the CI/CD
+
+This part is to show the CI/CD pipeline in action to clone, build, test, store (in the earlier created Docker Registry) and deploy the changed files for the container to the Docker VM which is also running the CI/CD pipeline.
+
+### Goal
+
+Undestand the value of the CI/CD pipeline for an organisation with respect to the speed of deveoping and deploying. 
+
+## Change the Deployment to be a karbon cluster
+
+This last pasrt is to get the created containers to be used with the k8s solution of choice.
+
+### Goal
+
+Making a small change will lead to deployment onto a k8s platform, but still everything is being used by the same push trigger.
 
 
-### General changes
+## Extras - TO BE BUILT!!!
 
-The following needs to be changed to match your environment:
-1. IP addresse (in most cases the IP address of the VM you run the containers on) 
-2. Volume redirection
-3. Parameters like password and usernames
-4. External port numbers 
+- Open ended question, make all of this for MS SQL and incorporate ERA for MS SQL? 
 
-### Gitea
-
-The default installation of Gitea is running HTTP only. To make the change to HTTPS, follow these steps:
-1. After the container are running using `docker-compose up -d`, run `docker exec -it gitea /bin/bash`
-2. Create your certificates via one of the two methods:
-	1. In the container run `gitea cert --host [HOST]` where [HOST] is the IP address, or hostname of the Gitea server to get the certificates ready to be used. The certificates (cert.pem and key.pem are writen in the root of the container). 
-	2. Follow these steps to create the certificates:
-		1. Make sure you have openssl installed on your machine (Linux) 
-		2. `openssl genrsa -des3 -passout pass:x -out keypair.key 2048`
-		3. `openssl rsa -passin pass:x -in keypair.key -out keyfile.key`
-		4. `openssl req -new -key keyfile.key -out certificate_req.csr`
-		5. `openssl x509 -req -days 365 -in certificate_req.csr -signkey keyfile.key -out certificate.crt`
-3. Then use vi /data/gitea/conf/app.ini and add as described in article the parameters at https://docs.gitea.io/en-us/https-setup/. Use `docker-compose stop gitea` and `docker-compose start gitea` to restart the Gitea server after the made changes and now the site will be accessable via HTTPS. The `CERT_FILE` can also be the `.crt` file. Same for the `KEY_FILE`. it can be the `.key` file.
-
-### Drone.io Server
-
-For the Drone server UI to be able to start, you need to make sure you have started the containers and assign Drone as the an application allowed to use your account for login. To do this, login into Gitea (**first user will also be the Admin for Gitea!**) and 
-1. Click on your Avatar (right top side of the screen in Gitea)
-2. Settings
-3. Applications
-4. Fill out **Create a new OAuth2 Appplication** fields and make sure the **Redirect URI** is 100% correct
-5. Click **Create Application** button
-6. Use the shown data in the docker-compose.yaml under `drone-server`. Set the parameters *DRONE_GITEA_CLIENT_ID* and *DRONE_GITEA_CLIENT_SECRET* to their corresponding values
-
----
-**NOTE**
-
-Make sure you save the data somewhere. As soon as you hit the **Save** button you will not see the value of secret field anymore.
-
----
-7. Click the **Save** button in the Gitea interface
-8. Restart the drone-server container via `docker-compose stop drone-server` and `docker-compose start drone-server`
-9. Open the interface of the drone-server using a browser
-10. This will show an Warning about an application wants to open in your name, do you want to authorize or not
-11. Select the **Authorize** button and now you should see the Drone server UI
-
-### Machine that is running the containers
-
-As we are using a Registry with Self Signed Certificates we need to tell Docker to allow those certificates. To do this, create a file (if not exist) `/etc/docker/daemon.json` and add the following parameter:
-
-`{
-  "insecure-registries" : ["IP ADDRESS of the Docker VM that runs the Registry Container"]
-}`
-
-As the Nginx container is running https, we don't have to add any ports. It then defaults to HTTPS port 443.
-
-### Your local Laptop/Machine
-The Gitea environment that we will deploy is using Self Signed Certificates. To allow git to also use this repository, provide the following commands:
-1. On a per pull/push basis, `git -c http.sslVerify=false REPO URL` or
-2. As a global setting for the whole system `git config --global http.sslVerify false`. This also works for all tools that use git in the background. Like GitDesktop.
+    - Provide the first steps
+    - How do we value this???
 
 
+# TO BE BUILT!!!
 
-## Usage
-Use `docker-compose up -d` to start the network and containers defined in the docker-compose.yaml file. Your environment should now be available. 
+- If on Green don't rebuild the Database, just use it.
+- If on Blue, see if Dev Database exists, if not create database (clone)/if exists, use the existing database.
 
+    - Use API calls, but do we use Cluster or Era API to see if database is there?
+    - USE API calls to clone databse server if doesn't exist
 
-**********
+- Use a loadbalancer (Nginx or HAProxy) to have a LB where we can use Blue (Dev/Test) and Green (Production) networks? Like `URL/dev` goes to the Blue and `URL` goes to Green.
+    
+    - Can we use the Clusters environment for Dev/Test and HPOC for Prod?
+    - Can we use a branch in Gitea to make the difference?
+    - Use Era clones of MariaDB when we are in Dev branch?
 
-# Happy DevOps-ing...
+      - First research delivers:
+      
+        - We can trigger Drone to do steps based on branch
+        - This URL where we can get the Variables needed, at least some of them: https://docs.drone.io/pipeline/environment/reference/
+        - This URL for triggers: https://docs.drone.io/pipeline/triggers/
+        - When merge (seen as push by Drone) we need to use the Prod environment. https://discourse.drone.io/t/whats-the-event-after-merging-a-pull-request/2733
+        

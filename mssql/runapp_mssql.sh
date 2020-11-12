@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Runapp for having the specific npm image container created
+# Runapp for not having the specific npm image container created. Script runs all npm steps to get the app running -> slow start
 
 # Get the Fiesta code into the system
 git clone https://github.com/sharonpamela/Fiesta.git /code/Fiesta
@@ -34,5 +34,22 @@ sed -i "s/REPLACE_DB_PASSWD/$DB_PASSWD/g" /code/MSSQL.sql
 # Add the leading and ending ' symbols
 /opt/mssql-tools/bin/sqlcmd -S $DB_SERVER -U sa -P $DB_PASSWD -i /code/MSSQL.sql
 
+npm install -g nodemon
+
+# Get ready to start the application
+cd /code/Fiesta
+npm install
+cd /code/Fiesta/client
+npm install
+
+# Update the packages
+npm fund
+npm update
+npm audit fix
+
+# Build the app
+npm run build
+
+# Run the NPM Application
 cd /code/Fiesta 
 npm start

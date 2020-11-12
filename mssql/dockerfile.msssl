@@ -1,3 +1,5 @@
+# Builds container where the NPM installationand configureation will be done in the runapp.sh script. Slow boot on first start.
+
 FROM alpine:3.11
 
 # MSSQL_VERSION can be changed, by passing `--build-arg MSSQL_VERSION=<new version>` during docker build

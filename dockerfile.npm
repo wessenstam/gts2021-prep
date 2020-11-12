@@ -1,10 +1,31 @@
 FROM alpine:3.11 as bases
 
+RUN apk add --no-cache --update nodejs npm git
+
+RUN mkdir /code
+WORKDIR /code
+
+# Get the Fiesta Applicaiton in the container
+RUN git clone https://github.com/sharonpamela/Fiesta.git /code/Fiesta
+
+# Get ready to build the application
+RUN cd /code/Fiesta && npm install
+RUN cd /code/Fiesta/client && npm install
+RUN cd /code/Fiesta/client && npm audit fix 
+RUN cd /code/Fiesta/client && npm fund 
+RUN cd /code/Fiesta/client && npm update
+RUN cd /code/Fiesta/client && npm run build
+
+FROM alpine:3.11 as Final_Image
+
 # MSSQL_VERSION can be changed, by passing `--build-arg MSSQL_VERSION=<new version>` during docker build
 ARG MSSQL_VERSION=17.5.2.1-1
 ENV MSSQL_VERSION=${MSSQL_VERSION}
 
 RUN apk add --no-cache --update nodejs npm git curl
+
+# Get the NMP part compiled
+RUN npm install -g nodemon
 
 WORKDIR /tmp
 # Installing system utilities
@@ -23,33 +44,6 @@ RUN apk add --no-cache curl gnupg --virtual .build-dependencies -- && \
     echo y | apk add --allow-untrusted msodbcsql17_${MSSQL_VERSION}_amd64.apk mssql-tools_${MSSQL_VERSION}_amd64.apk && \
     # Deleting packages
     apk del .build-dependencies && rm -f msodbcsql*.sig mssql-tools*.apk
-
-RUN mkdir /code
-WORKDIR /code
-
-# Get the Fiesta Applicaiton in the container
-RUN git clone https://github.com/sharonpamela/Fiesta.git /code/Fiesta
-
-# Get the NMP part compiled
-RUN npm install -g nodemon
-
-# Get ready to start the application
-RUN cd /code/Fiesta
-RUN npm install
-RUN cd /code/Fiesta/client
-RUN npm install
-
-# Update the packages
-RUN npm audit fix
-RUN npm fund
-RUN npm update
-
-# Build the app
-RUN npm run build
-
-FROM alpine:3.11
-
-
 # Copy the earlier created applicaiton from the first step into the new container
 COPY --from=bases /code /code
 

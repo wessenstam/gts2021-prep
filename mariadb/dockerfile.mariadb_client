@@ -1,9 +1,10 @@
-FROM alpine:3.10
+# Docker file that uses an external MariaDB
+# NPM built by the script -> Slow start
 
-RUN apk add --no-cache --update nodejs npm \
-    git  python3 python3-dev gcc g++ unixodbc-dev
+FROM alpine:3.11
+
+RUN apk add --no-cache --update nodejs npm mysql-client git python3 python3-dev gcc g++ unixodbc-dev curl
 RUN pip3 install --upgrade pip
-RUN pip3 install boto3 sqlalchemy_pyodbc_mssql
 
 RUN mkdir /code
 WORKDIR /code

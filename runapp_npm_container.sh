@@ -1,7 +1,5 @@
 #!/bin/sh
 
-# Runapp for having the specific npm image container created
-
 # Get the Fiesta code into the system
 git clone https://github.com/sharonpamela/Fiesta.git /code/Fiesta
 
@@ -34,5 +32,6 @@ sed -i "s/REPLACE_DB_PASSWD/$DB_PASSWD/g" /code/MSSQL.sql
 # Add the leading and ending ' symbols
 /opt/mssql-tools/bin/sqlcmd -S $DB_SERVER -U sa -P $DB_PASSWD -i /code/MSSQL.sql
 
+# Run the NPM Application
 cd /code/Fiesta 
 npm start

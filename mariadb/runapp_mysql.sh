@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Runapp for having the specific npm image container created
+# Use with MariaDB database and the script needs to build the npm steps
 
 # Get the Fiesta code into the system
 git clone https://github.com/sharonpamela/Fiesta.git /code/Fiesta
@@ -28,11 +28,22 @@ fi
 sed -i "s/REPLACE_DB_USER_NAME/$FIESTA_USER/g" /code/Fiesta/config/config.js
 sed -i "s/REPLACE_DB_PASSWORD/$DB_PASSWD1/g" /code/Fiesta/config/config.js
 
-# Change the database pasword for the account
-sed -i "s/REPLACE_DB_PASSWD/$DB_PASSWD/g" /code/MSSQL.sql
+npm install -g nodemon
 
-# Add the leading and ending ' symbols
-/opt/mssql-tools/bin/sqlcmd -S $DB_SERVER -U sa -P $DB_PASSWD -i /code/MSSQL.sql
+# Get ready to start the application
+cd /code/Fiesta
+npm install
+cd /code/Fiesta/client
+npm install
 
+# Update the packages
+npm fund
+npm update
+npm audit fix
+
+# Build the app
+npm run build
+
+# Run the NPM Application
 cd /code/Fiesta 
 npm start

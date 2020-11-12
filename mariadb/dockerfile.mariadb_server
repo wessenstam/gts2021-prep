@@ -1,6 +1,9 @@
-FROM alpine:3.10
+# Docker file that also has the MariaDB in the container
+# NPM build by script -> slow start
 
-RUN apk add --no-cache --update nodejs npm mysql mysql-client  git  python3 python3-dev gcc g++ unixodbc-dev curl
+FROM alpine:3.11
+
+RUN apk add --no-cache --update nodejs npm mysql mysql-client git python3 python3-dev gcc g++ unixodbc-dev curl
 RUN pip3 install --upgrade pip
 
 ## Get the MySQL ready to be used
