@@ -31,6 +31,7 @@ steps:
     commands:
       - npm version
       - if [ "${DB_TYPE}" = "mysql" ]; then mysql --version; fi
+      - git clone https://github.com/sharonpamela/Fiesta.git /code/Fiesta
       - if [ `echo $DB_PASSWD | grep "/" | wc -l` -gt 0 ]; then DB_PASSWD=$(echo "${DB_PASSWD//\//\\/}"); fi
       - sed -i 's/REPLACE_DB_NAME/FiestaDB/g' /code/Fiesta/config/config.js
       - sed -i "s/REPLACE_DB_HOST_ADDRESS/$DB_SERVER/g" /code/Fiesta/config/config.js

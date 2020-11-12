@@ -2,9 +2,6 @@
 
 # Script to be used when the npm steps have been run in the multi step image build
 
-# Get the Fiesta code into the system
-git clone https://github.com/sharonpamela/Fiesta.git /code/Fiesta
-
 # If there is a "/" in the password or user name we need to change it otherwise sed goes haywire
 if [ `echo $DB_PASSWD | grep "/" | wc -l` -gt 0 ]
     then 

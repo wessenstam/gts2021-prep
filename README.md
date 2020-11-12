@@ -106,6 +106,7 @@ Making a small change will lead to deployment onto a k8s platform, but still eve
 
 # TO BE BUILT!!!
 
+- Add a second disk of 30 GB and have it being used by the CI/CD pipeline ans well as Docker. Also include the overlay2 storage driver.
 - If on Green don't rebuild the Database, just use it.
 - If on Blue, see if Dev Database exists, if not create database (clone)/if exists, use the existing database.
 
