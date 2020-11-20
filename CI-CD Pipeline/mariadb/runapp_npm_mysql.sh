@@ -9,11 +9,15 @@ git clone https://github.com/sharonpamela/Fiesta.git /code/Fiesta
 if [ `echo $DB_PASSWD | grep "/" | wc -l` -gt 0 ]
     then 
         DB_PASSWD1=$(echo "${DB_PASSWD//\//\\/}")
+    else
+        DB_PASSWD1=$DB_PASSWD
 fi
 echo "DB_PASSWD1 is "$DB_PASSWD1
 if [ `echo $DB_USER | grep "/" | wc -l` -gt 0 ]
     then 
         DB_USER1=$(echo "${DB_PASSWD//\//\\/}")
+    else
+        DB_USER1=$DB_USER
 fi
 # Change the code so it works in the container
 sed -i 's/REPLACE_DB_NAME/FiestaDB/g' /code/Fiesta/config/config.js

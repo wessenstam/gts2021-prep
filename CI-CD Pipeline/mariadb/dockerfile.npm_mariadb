@@ -33,6 +33,7 @@ COPY --from=bases /code /code
 # Copy the starting app
 COPY runapp.sh /code
 RUN chmod +x /code/runapp.sh
+WORKDIR /code
 
 # Start the application
 ENTRYPOINT [ "/code/runapp.sh"]
