@@ -2,9 +2,6 @@
 
 # Use with MariaDB database and the script doesn't need to build the npm steps
 
-# Get the Fiesta code into the system
-git clone https://github.com/sharonpamela/Fiesta.git /code/Fiesta
-
 # If there is a "/" in the password or user name we need to change it otherwise sed goes haywire
 if [ `echo $DB_PASSWD | grep "/" | wc -l` -gt 0 ]
     then 
@@ -15,7 +12,7 @@ fi
 echo "DB_PASSWD1 is "$DB_PASSWD1
 if [ `echo $DB_USER | grep "/" | wc -l` -gt 0 ]
     then 
-        DB_USER1=$(echo "${DB_PASSWD//\//\\/}")
+        DB_USER1=$(echo "${DB_USER//\//\\/}")
     else
         DB_USER1=$DB_USER
 fi
@@ -29,7 +26,7 @@ then
 else
     sed -i 's/REPLACE_DB_DOMAIN_NAME/\/\/DB_DOMAIN_NAME/g' /code/Fiesta/config/config.js
 fi
-sed -i "s/REPLACE_DB_USER_NAME/$FIESTA_USER/g" /code/Fiesta/config/config.js
+sed -i "s/REPLACE_DB_USER_NAME/$DB_USER1/g" /code/Fiesta/config/config.js
 sed -i "s/REPLACE_DB_PASSWORD/$DB_PASSWD1/g" /code/Fiesta/config/config.js
 
 # Run the NPM Application
