@@ -1,2 +1,7 @@
 # Default ignored files
+<<<<<<< Updated upstream
 /workspace.xml
+=======
+/shelf/
+/workspace.xml
+>>>>>>> Stashed changes
