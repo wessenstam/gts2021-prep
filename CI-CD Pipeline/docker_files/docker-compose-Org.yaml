@@ -6,20 +6,6 @@ networks:
 
 services:
 
-# Start the MySQL server for Gitea
-  db:
-    image: mysql:5.7
-    restart: always
-    environment:
-      - MYSQL_ROOT_PASSWORD=gitea
-      - MYSQL_USER=gitea
-      - MYSQL_PASSWORD=gitea
-      - MYSQL_DATABASE=gitea
-    networks:
-      - gitea
-    volumes:
-     - /gitea/mysql:/var/lib/mysql
-
 # Start the Gitea server
   gitea:
     image: gitea/gitea:latest
@@ -45,6 +31,22 @@ services:
     depends_on:
       - db
 
+# Start the MySQL server for Gitea
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=gitea
+      - MYSQL_USER=gitea
+      - MYSQL_PASSWORD=gitea
+      - MYSQL_DATABASE=gitea
+    networks:
+      - gitea
+    volumes:
+     - /gitea/mysql:/var/lib/mysql
+    depends_on:
+     - nginx
+
 # Start the Drone server
   drone-server:
     image: drone/drone:latest
@@ -58,6 +60,7 @@ services:
     restart: always
     depends_on:
       - gitea
+      - docker-registry
     environment:
       - DRONE_OPEN=true
       - DRONE_GITEA=true
@@ -94,5 +97,59 @@ services:
       - DRONE_RUNNER_CAPACITY=1
       - DRONE_RUNNER_NETWORKS=gitea
       - DRONE_RUNNER_VOLUMES=/gitea/drone/agent:/data
+    networks:
+      - gitea
+
+
+# Start the Docker registry
+  docker-registry:
+    image: registry:latest
+    ports:
+      - 5000:5000
+    restart: always
+    container_name: docker-registry
+    environment:
+      - REGISTRY_AUTH=htpasswd
+      - REGISTRY_AUTH_HTPASSWD_REALM=Registry-Realm
+      - REGISTRY_AUTH_HTPASSWD_PATH=/auth/registry.passwd
+    volumes:
+      - /gitea/docker_reg/data:/var/lib/registry
+      - /gitea/haproxy/ssl:/certs
+      - /gitea/auth:/auth
+    networks:
+      - gitea
+
+# Docker Registry UI read/only
+  docker-registry-ui:
+    image: parabuzzle/craneoperator:latest
+    ports:
+      - "8081:80"
+    environment:
+      - REGISTRY_HOST=10.42.74.57
+      - REGISTRY_PORT=5000
+      - REGISTRY_PROTOCOL=http
+      - REGISTRY_USERNAME=nutanix
+      - REGISTRY_PASSWORD=nutanix/4u
+      - SSL_VERIFY=false
+      - USERNAME=admin
+      - PASSWORD=nutanix
+    restart: always
+    depends_on:
+      - docker-registry
+    networks:
+      - gitea
+
+# Start the NGINX HTTPS Proxy server for the Docker Registry
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /gitea/nginx/conf.d/:/etc/nginx/conf.d/
+      - /gitea/nginx/ssl/:/etc/nginx/ssl/
     networks:
       - gitea

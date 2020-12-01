@@ -1,3 +1,5 @@
 {
-    "restructuredtext.preview.sphinx.disabled": true
+    "restructuredtext.confPath": "${workspaceFolder}",
+    "restructuredtext.linter.executablePath": "/usr/local/bin/rstcheck",
+    "restructuredtext.sphinxBuildPath": "/usr/local/bin/sphinx-build"
 }

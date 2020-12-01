@@ -1,30 +1,32 @@
-.. title:: Introduction to Nutanix AHV
+.. title:: vGTS 2021 - CI/CD pipeline using Drone
 
 .. toctree::
   :maxdepth: 2
-  :caption: Labs
-  :name: _labs
+  :caption: Build your labenvironment
+  :name: _lab_env
   :hidden:
 
-  examplelab1/examplelab1
-  examplelab2/examplelab2
+  start/start
 
 .. toctree::
   :maxdepth: 2
-  :caption: Optional Labs
-  :name: _optional_labs
+  :caption: Containerization
+  :name: _basic_labs
   :hidden:
 
-  examplelab3/examplelab3
+  basic/basic
+  phase2/phase2
 
 .. toctree::
   :maxdepth: 2
-  :caption: Appendix
-  :name: _appendix
+  :caption: Tools
+  :name: _tools
   :hidden:
 
-  appendix/glossary
-  appendix/otherstuff
+  tools/tools
+  cicd/cicd
+
+
 
 .. _getting_started:
 
@@ -32,27 +34,18 @@
 Getting Started
 ---------------
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed velit odio, ultrices sed elementum vitae, dictum eget turpis. Etiam ultrices orci quis tempus tempus. Nulla non nibh imperdiet, suscipit risus quis, eleifend nisl. Morbi at posuere nibh, quis bibendum dui. Morbi dictum sem a ipsum bibendum condimentum. Suspendisse id ante gravida, efficitur leo a, consequat enim. Suspendisse tempor lorem vel purus scelerisque, vel facilisis lorem consequat. Pellentesque augue orci, iaculis vel mollis sit amet, scelerisque a tellus. Aliquam commodo in lectus feugiat porta.
+This workshop is showing using a slow build up how to create a CI/CD pipeline using Drone,Gitea and a local Docker registry.
 
-What's New
-++++++++++
+Pre-requirements
+++++++++++++++++
 
-- Workshop updated for the following software versions:
-    - AOS & PC 5.11
-
-- Optional Lab Updates:
-
-- Added :ref:`example_lab_3`
+As this workshop is using Docker to a high extent, primary knowledge of containers and Docker in particular is needed.
+If this knowledge doesn't exist, please follow `this Docker workshop <https://nutanix.handsonworkshops.com/workshops/cd4549db-7d04-4a60-b24c-a015b09eb71d/start/>`_ to build your knowledge.
 
 Agenda
 ++++++
 
-- Introductions
-- Nutanix Technology Overview
-- Nutanix Configuration
-- Deploying and Managing Workloads
-- Security Compliance
-- Monitoring and Managing the Environment
+- 
 
 Introductions
 +++++++++++++
