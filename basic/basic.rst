@@ -166,12 +166,14 @@ Follow these steps to create the first container. As sqpce consumed by the conta
 
 The alpine image with tag 3.11 is seen and an image with an ID, but they don't mean much to us, let's recreate the image and provide a more meaningfull name
 
-#. Rerun ``docker build . -t <YOUR DOCKER HUB USERNAME>/fiesta_app:1.0``. Example would be ``docker build . -t xyz-dockerhub/fiesta_app:1.0`` This will tag the existing image **<none>** to be called **xyz-dockerhub/fiesta_app** with version number **1.0**
+#. Rerun ``docker build . -t fiesta_app:1.0``. This will tag the existing image **<none>** to be called **fiesta_app** with version number **1.0**
 #. Run ``docker image ls`` to show the list of images we have in our docker environment.
 
    .. figure:: images/7.png
 
-#. Let's start the docker image to become a container by running ``docker run -d --rm --name Fiesta_App xyz-dockerhub/fiesta_app:1.0``
+   .. TODO:: change the image to reflect the correct information!!!
+
+#. Let's start the docker image to become a container by running ``docker run -d --rm --name Fiesta_App fiesta_app:1.0``
 
    Explanation of the command :
 
@@ -179,7 +181,7 @@ The alpine image with tag 3.11 is seen and an image with an ID, but they don't m
    - ``--rm`` remove the container after it stops
    - ``-d`` run as a Daemon in the background
 
-#. Using ``docker logs --follow Fiesta_app`` to see the console log of the container
+#. Using ``docker logs --follow Fiesta_App`` to see the console log of the container
 #. After the application has been started you will see something like the below
 
    .. figure:: images/8.png
@@ -194,8 +196,8 @@ So the application has been started and the database can be received.
 That means the application is running as a container. BUT if you would open the URL as mentioned in the screenshot on port 3000, of your dockerVM, you won't get any answer. The reason for this is that the IP address of the container is internal to the Docker environment. To make this work we have to tell the docker engine to "open" port 3000 to the outside world.
 
 #. Stop the container running ``docker stop Fiesta_App``. This will stop the container and after that remove the container from the docker engine
-#. Now using the **-p 3000:3000** parameter in the ``docker run -d --rm -p 3000:3000 --name Fiesta_App xyz-dockerhub/fiesta_app:1.0`` command we are telling the Docker Engine to expose port 3000 to the outside world. 
-#. Wait till you see the same output in the logs as you have seen earlier (from the ``docker logs --follow Fiesta_App`` command) and open a browser. URL to be used is **\http://<IP-ADDRESS-DOCKER-VM>:3000/products**. Now you should see the Fiesta App and the data from the database.
+#. Now using the **-p 5000:3000** parameter in the ``docker run -d --rm -p 5000:3000 --name Fiesta_App fiesta_app:1.0`` command we are telling the Docker Engine to expose port 5000 to the outside world. 
+#. Wait till you see the same output in the logs as you have seen earlier (from the ``docker logs --follow Fiesta_App`` command) and open a browser. URL to be used is **\http://<IP-ADDRESS-DOCKER-VM>:5000/products**. Now you should see the Fiesta App and the data from the database.
 
    .. figure:: images/9.png
 

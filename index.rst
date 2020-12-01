@@ -19,15 +19,13 @@
 
 .. toctree::
   :maxdepth: 2
-  :caption: Tools
-  :name: _tools
+  :caption: CICD
+  :name: _cicd
   :hidden:
 
-  tools/tools
-  cicd/cicd
-
-
-
+  phase3/phase3
+  phase4/phase4
+  
 .. _getting_started:
 
 ---------------

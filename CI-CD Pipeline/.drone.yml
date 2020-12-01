@@ -13,30 +13,29 @@ steps:
       - name: docker_sock
         path: /var/run/docker.sock
     commands:
-      - docker build -t 10.42.74.57/test:${DRONE_COMMIT_SHA:0:6} .
+      - docker build -t 10.42.37.122/fiesta:${DRONE_COMMIT_SHA:0:6} .
 
   - name: Test built container
-    image: 10.42.74.57/test:${DRONE_COMMIT_SHA:0:6}
+    image: 10.42.37.122/fiesta:${DRONE_COMMIT_SHA:0:6}
     pull: if-not-exists
     environment:
       USERNAME:
         from_secret: docker_username
       PASSWORD:
         from_secret: docker_password
-      DB_SERVER: 10.42.74.10
-      DB_PASSWD: nutanix/4u
-      DB_USER: sa
-      DB_TYPE: mssql
-      FIESTA_USER: fiesta
+      DB_SERVER: 10.42.37.59
+      DB_PASSWD: fiesta
+      DB_USER: fiesta
+      DB_TYPE: mysql
     commands:
       - npm version
-      - if [ "${DB_TYPE}" = "mysql" ]; then mysql --version; fi
+      - mysql -u$DB_PASSWD -p$DB_USER -h $DB_SERVER FiestaDB -e "select * from Products;"
       - if [ `echo $DB_PASSWD | grep "/" | wc -l` -gt 0 ]; then DB_PASSWD=$(echo "${DB_PASSWD//\//\\/}"); fi
       - sed -i 's/REPLACE_DB_NAME/FiestaDB/g' /code/Fiesta/config/config.js
       - sed -i "s/REPLACE_DB_HOST_ADDRESS/$DB_SERVER/g" /code/Fiesta/config/config.js
       - sed -i "s/REPLACE_DB_DIALECT/$DB_TYPE/g" /code/Fiesta/config/config.js
       - sed -i "s/DB_DOMAIN_NAME/LOCALHOST/g" /code/Fiesta/config/config.js
-      - sed -i "s/REPLACE_DB_USER_NAME/$FIESTA_USER/g" /code/Fiesta/config/config.js
+      - sed -i "s/REPLACE_DB_USER_NAME/$DB_USER/g" /code/Fiesta/config/config.js
       - sed -i "s/REPLACE_DB_PASSWORD/$DB_PASSWD/g" /code/Fiesta/config/config.js
 
   - name: Push to Local Repo
