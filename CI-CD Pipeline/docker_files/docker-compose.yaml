@@ -18,7 +18,7 @@ services:
     networks:
       - gitea
     volumes:
-     - /gitea/mysql:/var/lib/mysql
+     - /<DOCKER-VOLUME>/mysql:/var/lib/mysql
 
 # Start the Gitea server
   gitea:
@@ -36,7 +36,7 @@ services:
     networks:
       - gitea
     volumes:
-      - /gitea:/data
+      - /<DOCKER-VOLUME>:/data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     ports:
@@ -54,7 +54,7 @@ services:
       - 8080:80
       - 9000
     volumes:
-      - /gitea/drone/server:/var/lib/drone/
+      - /<DOCKER-VOLUME>/drone/server:/var/lib/drone/
     restart: always
     depends_on:
       - gitea
@@ -86,13 +86,13 @@ services:
       - drone-server
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /gitea/drone/agent:/data
+      - /<DOCKER-VOLUME>/drone/agent:/data
     environment:
       - DRONE_RPC_HOST=10.42.74.57:8080
       - DRONE_RPC_PROTO=http
       - DRONE_RPC_SECRET=9c3921e3e748aff725d2e16ef31fbc42
       - DRONE_RUNNER_CAPACITY=1
       - DRONE_RUNNER_NETWORKS=gitea
-      - DRONE_RUNNER_VOLUMES=/gitea/drone/agent:/data
+      - DRONE_RUNNER_VOLUMES=/<DOCKER-VOLUME>/drone/agent:/data
     networks:
       - gitea
