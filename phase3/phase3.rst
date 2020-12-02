@@ -330,31 +330,329 @@ As all steps have completed successful and the output of the **config.js** file 
 Upload the images
 ^^^^^^^^^^^^^^^^^
 
+For this part of the workshop you should have a Dockerhub account created. The examples we will be using are using devnutanix as the username for Dockerhub. The user nutanix was already taken...
 
+For images to be uploaded, we need to do two things, 1) We need to tag images we want to upload to dockerhub with the username (devnutanix in our example) and we need to login to docker hub before we can push images.
 
+Manual upload of images
+***********************
 
+#. Login to your Docker VM, if not already done, using **root** and **nutanix/4u** as the credentials or use your terminal in VC both options work.
+#. Run the command ``docker login`` and use your credentials you used to set up your Dockerhub account
+
+   .. figure:: images/20.png
+
+#. If you see the message **Login Succeeded** Docker has stored the credentials as will use them the next time you run docker login
+#. Run ``docker image ls`` to get the list of images on your docker VM
+
+   .. figure:: images/21.png
+
+#. Run ``docker image tag fiesta_app:15b0c0 devnutanix/fiesta_app:1.0`` this will create a new image which will be tagged **devnutanix/fiesta_app** with version **1.0**
+#. Running ``docker image ls`` is showing the image in the list
+
+   .. figure:: images/22.png
+
+#. Run ``docker push devnutanix/fiesta_app:1.0`` to initiate to push of the image onto the Dockerhub environment
+#. After a few seconds you should see this in your screen
+
+   .. figure:: images/23.png
+
+#. Open your dockerhub account using a browser. In your account you should now see the just pushed image 
+
+   .. figure:: images/24.png
+
+Now that we can do this manually, let's get drone to do it for us the next time.
+
+CI/CD Upload of images
+**********************
+
+#. Open the VC instance where you have changed, created, committed and pushed files before.
+#. Open the .drone.yml file and add the following part (before the **volumes** section!)
+
+   .. code-block:: yaml
+
+      - name: Push to Dockerhub
+        image: docker:latest
+        pull: if-not-exists
+        environment:
+          USERNAME:
+            from_secret: dockerhub_username
+          PASSWORD:
+            from_secret: dockerhub_password
+        volumes:
+          - name: docker_sock
+            path: /var/run/docker.sock
+        commands:
+          - docker login -u $USERNAME -p $PASSWORD
+          - docker image tag fiesta_app:${DRONE_COMMIT_SHA:0:6} devnutanix/fiesta_app:latest
+          - docker image tag fiesta_app:${DRONE_COMMIT_SHA:0:6} devnutanix/fiesta_app:${DRONE_COMMIT_SHA:0:6}
+          - docker push devnutanix/fiesta_app:${DRONE_COMMIT_SHA:0:6}
+          - docker push devnutanix/fiesta_app:latest
+ 
+#. Save the file. **DON'T COMMIT AND PUSH YET!!!!** we need to make a small change to Drone to make the step work
+#. As we are using the **from_secret** parameter we need to tell Drone what the secret is. Open the Drone UI (\http://<IP ADDRESS OF DOCKER VM>:8080)
+#. Click on your **Fiesta_Application repository -> SETTINGS**
+#. Under the **Secrets** section type the following:
+
+   - **dockerhub_username** - Your DockerHub Account name (we will use devnutanix)
+   - **dockerhub_password** - The password of the Dockerhub Account
+
+   .. figure:: images/25.png
+
+#. Return to the VC instance we left earlier and run the Commit and push step to get the CI/CD running. The end stage will be a push to the Dockerhub. The end of the CI/CD Pipeline should be that we have three images/versions in the Dockerhub environment (the below image is composed out of Drone UI and Dockerhub UI)
+
+   .. figure:: images/27.png
+
+Now that we are able to use the CI/CD pipeline to build, basic test and push to Dockerhub repository the last step is to deploy the image as a container to the docker VM.
 
 -------
 
 Deploy the images
 ^^^^^^^^^^^^^^^^^
 
+As we already deployed our own build Fiesta_App image in a former part of the workshop (:ref:`basic_container`) we know what the steps are to deploy an image. Those steps need to be repeated by the CI/CD pipeline AFTER the test and the upload have passed. Only then we are allowing the deployment of the image.
+
+#. Open the **.drone.yml** file
+#. Add the following text 
+
+   .. code-block:: yaml
+    
+       - name: Deploy newest image
+         image: docker:latest
+         environment:
+           USERNAME:
+             from_secret: dockerhub_username
+           PASSWORD:
+             from_secret: dockerhub_password
+         volumes:
+           - name: docker_sock
+             path: /var/run/docker.sock
+         commands:
+           - docker login -u $USERNAME -p $PASSWORD
+           - docker pull devnutanix/fiesta_app:latest
+           - if [ `docker ps | grep Fiesta_App | wc -l` -eq 1 ]; then echo "Stopping existing Docker Container...."; docker stop Fiesta_App; else echo  "Docker container has not been found..."; fi
+           - sleep 10
+           - docker run --name Fiesta_App --rm -p 5000:3000 -d devnutanix/fiesta_app:latest
 
 
 -------
 
+Use variables outside of the container
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+As we have now a running CI/CD pipeline that is functional, we need to start thinking about the parameters that may change during new tests or changes in the environment we use being Dev/Test or Production. Also having passwords and/or secrets in plain text is not the best idea. This means that the variables/parameters, we now have defined in the different files, need to be stored somewhere. The location where we put these variables/parameters must be used during, build, test and deploy time by the CI/CD pipeline. We already used the **Secrets** in the upload and deploy steps of Drone. So let's extend it for the images that need to be built for all variables/parameters.
+
+List of variables/parameters
+****************************
+
+The following parameters are being used by the image (Description of the variable/parameter - name of the variable/parameter):
+
+- Dockerhub username - dockerhub_username
+- Dockerhub password - dockerhub_password
+- Database Server IP - DB_SERVER
+- Database name - DB_NAME
+- Database type - DB_TYPE
+- Database user - DB_USER
+- Database password - DB_PASSWD
+
+We need to make changes to the following files so they use the set variables/parameters
+
+- .drone.yml
+- runapp.sh
+
+We are also going to recreate the images, but that will be solved by the CI/CD pipeline, so no need to rebuild manually images etc.. 
+
+Change runapp.sh
+****************
+
+#. Open the VC that you used to create the runapp.sh earlier (you should have the .drone.yml and dockerfile in the the same directory)
+#. Select all content and remove this from the file
+#. Copy and paste the following content in the runapp.sh file
+
+   .. code-block:: bash
+
+      #!/bin/sh
+
+      # If there is a "/" in the password or username we need to change it otherwise sed goes haywire
+      if [ `echo $DB_PASSWD | grep "/" | wc -l` -gt 0 ]
+          then 
+              DB_PASSWD1=$(echo "${DB_PASSWD//\//\\/}")
+          else
+              DB_PASSWD1=$DB_PASSWD
+      fi
+      
+      if [ `echo $DB_USER | grep "/" | wc -l` -gt 0 ]
+          then 
+              DB_USER1=$(echo "${DB_USER//\//\\/}")
+          else
+              DB_USER1=$DB_USER
+      fi
+
+      # Clone the Repo into the container in the /code folder we already created in the dockerfile
+      git clone https://github.com/sharonpamela/Fiesta /code/Fiesta
+
+      # Change the Fiesta configuration code so it works in the container
+      sed -i "s/REPLACE_DB_NAME/$DB_NAME/g" /code/Fiesta/config/config.js
+      sed -i "s/REPLACE_DB_HOST_ADDRESS/$DB_SERVER/g" /code/Fiesta/config/config.js
+      sed -i "s/REPLACE_DB_DIALECT/$DB_TYPE/g" /code/Fiesta/config/config.js
+      sed -i "s/REPLACE_DB_USER_NAME/$DB_USER1/g" /code/Fiesta/config/config.js
+      sed -i "s/REPLACE_DB_PASSWORD/$DB_PASSWD1/g" /code/Fiesta/config/config.js
+
+      # Install the nodemon package
+      npm install -g nodemon
+
+      # Get ready to start the application
+      cd /code/Fiesta
+      npm install
+      cd /code/Fiesta/client
+      npm install
+
+      # Update the packages
+      npm fund
+      npm update
+      npm audit fix
+
+      # Build the app
+      npm run build
+
+      # Run the NPM Application
+      cd /code/Fiesta
+      npm start
+
+#. Save the file
+#. Open the .drone.yml file and replace the content with the following
+
+   .. code-block:: yaml
+
+      kind: pipeline
+      name: default
+
+      clone:
+        skip_verify: true
+
+      steps:
+
+        - name: build test image
+          image: docker:latest
+          pull: if-not-exists
+          volumes:
+            - name: docker_sock
+              path: /var/run/docker.sock
+          commands:
+            - docker build -t fiesta_app:${DRONE_COMMIT_SHA:0:6} .
+
+        - name: Test local built container
+          image: fiesta_app:${DRONE_COMMIT_SHA:0:6}
+          pull: if-not-exists
+          environment:
+            USERNAME:
+              from_secret: dockerhub_username
+            PASSWORD:
+              from_secret: dockerhub_password
+            DB_SERVER:
+              from_secret: db_server_ip
+            DB_PASSWD:
+              from_secret: db_passwd
+            DB_USER: 
+              from_secret: db_user
+            DB_TYPE: 
+              from_secret: db_type
+            DB_NAME:
+              from_secret: db_name
+          commands:
+            - npm version
+            - mysql -u$DB_PASSWD -p$DB_USER -h $DB_SERVER $DB_NAME -e "select * from Products;"
+            - git clone https://github.com/sharonpamela/Fiesta /code/Fiesta
+            - if [ `echo $DB_PASSWD | grep "/" | wc -l` -gt 0 ]; then DB_PASSWD=$(echo "${DB_PASSWD//\//\\/}"); fi
+            - sed -i 's/REPLACE_DB_NAME/FiestaDB/g' /code/Fiesta/config/config.js
+            - sed -i "s/REPLACE_DB_HOST_ADDRESS/$DB_SERVER/g" /code/Fiesta/config/config.js
+            - sed -i "s/REPLACE_DB_DIALECT/$DB_TYPE/g" /code/Fiesta/config/config.js
+            - sed -i "s/REPLACE_DB_USER_NAME/$DB_USER/g" /code/Fiesta/config/config.js
+            - sed -i "s/REPLACE_DB_PASSWORD/$DB_PASSWD/g" /code/Fiesta/config/config.js
+
+        - name: Push to Dockerhub
+          image: docker:latest
+          pull: if-not-exists
+          environment:
+            USERNAME:
+              from_secret: dockerhub_username
+            PASSWORD:
+              from_secret: dockerhub_password
+          volumes:
+            - name: docker_sock
+              path: /var/run/docker.sock
+          commands:
+            - docker login -u $USERNAME -p $PASSWORD
+            - docker image tag fiesta_app:${DRONE_COMMIT_SHA:0:6} $USERNAME/fiesta_app:latest
+            - docker image tag fiesta_app:${DRONE_COMMIT_SHA:0:6} $USERNAME/fiesta_app:${DRONE_COMMIT_SHA:0:6}
+            - docker push $USERNAME/fiesta_app:${DRONE_COMMIT_SHA:0:6}
+            - docker push $USERNAME/fiesta_app:latest
+
+        - name: Deploy newest image
+          image: docker:latest
+          environment:
+            USERNAME:
+              from_secret: dockerhub_username
+            PASSWORD:
+              from_secret: dockerhub_password
+            DB_SERVER:
+              from_secret: db_server_ip
+            DB_PASSWD:
+              from_secret: db_passwd
+            DB_USER: 
+              from_secret: db_user
+            DB_TYPE: 
+              from_secret: db_type
+            DB_NAME:
+              from_secret: db_name
+          volumes:
+            - name: docker_sock
+              path: /var/run/docker.sock
+          commands:
+            - docker login -u $USERNAME -p $PASSWORD
+            - docker pull $USERNAME/fiesta_app:latest
+            - if [ `docker ps | grep Fiesta_App | wc -l` -eq 1 ]; then echo "Stopping existing Docker Container...."; docker stop Fiesta_App; else echo "Docker container has not been found..."; fi
+            - sleep 10
+            - docker run --name Fiesta_App --rm -p 5000:3000 -d -e DB_SERVER=$DB_SERVER -e DB_USER=$DB_USER -e DB_TYPE=$DB_TYPE -e DB_PASSWD=$DB_PASSWD -e DB_NAME=$DB_NAME $USERNAME/fiesta_app:latest
+
+      volumes:
+      - name: docker_sock
+        host:
+          path: /var/run/docker.sock
+
+#. Save the file
+#. Open the Drone UI so we can set the variables/parameters we need during the different steps of the CI/CD pipeline
+#. Create the following and their values (click the **ADD A SECRET** button to save the secret)
+
+   - **db-server_ip** - <IP ADDRESS OF MARIADB SERVER>
+   - **db_passwd** - fiesta
+   - **db_user** - fiesta
+   - **db_type** - mysql
+   - **db_name** - FiestaDB
+
+   .. figure:: images/28.png
+
+#. In Drone click the **ACTIVITY FEED** text to return to the activity screen
+#. Now go back to the VC UI and Commit and Push the the files. As soon as you have done so, return to the Drone UI to see the steps being run using the created variables/parameters
+
+   .. figure:: images/29.png
+
+#. To see the progress of the container switch to the VC that we used to connect to the docker vm, or use a ssh session to the docker server and run ``docker logs --follow Fiesta_App``. The process will take approx 2-3 minutes. Wait to open the browser till you see a message ``[1]   On Your Network:  http://172.17.0.6:3000``.
+#. Point your browser to **\http://<IP ADDRESS DOCKER VM>:5000/Products** and you'll see the Fiesta Application as you have seen before.
+
+------
 .. raw:: html
 
 .. raw:: html
 
     <H1><font color="#AFD135"><center>Congratulations!!!!</center></font></H1>
 
-We have just created our first CI/CD pipeline driven image build. **But** we still have to do a few thing...
+We have just used our CI/CD pipeline and solved, so far, these topics. 
 
 - The way of working using **vi** or **nano** is not very effective and ready for human error (:fa:`thumbs-up`)
-- Variables needed, have to be set outside of the image we build (:fa:`thumbs-down`)
+- Variables needed, have to be set outside of the image we build (:fa:`thumbs-up`)
 - The container build takes a long time and is a tedeous work including it's management (:fa:`thumbs-up`)
+- The image is only available as long as the Docker VM exists (:fa:`thumbs-up`)
 - The start of the container takes a long time (:fa:`thumbs-down`)
-- The image is only available as long as the Docker VM exists (:fa:`thumbs-down`)
 
-The next modules in this workshop are going to address these :fa:`thumbs-down`.... Let's go for it!
+The next and last module in this workshop, is solving the last :fa:`thumbs-down`. Having the container start faster... Let's go for it!

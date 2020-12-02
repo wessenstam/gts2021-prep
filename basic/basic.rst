@@ -47,11 +47,14 @@ Let's start analyzing the installation of the Fiesta Application by using the Bl
 
 These steps are to be repeated during the container creation
 
+
+.. _basic_container:
+
 Get the basic container
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 During this part we are going to install our first container. The building of container are being done using a specific file. This file is called ``dockerfile``.
-Follow these steps to create the first container. As sqpce consumed by the container is crucial we are going to rebuild our Fiesat Application wit the use of Alpine Linux. This is a small Linux distribution and very commonly used by containe builders.
+Follow these steps to create the first container. As sqpce consumed by the container is crucial we are going to rebuild our Fiesta Application wit the use of Alpine Linux. This is a small Linux distribution and very commonly used by containe builders.
 
 #. Login to your docker vm using SSH as **root** and the passwrod **nutanix/4u**
 #. Run the command ``mkdir github``
