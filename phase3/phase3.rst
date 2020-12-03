@@ -34,7 +34,8 @@ Create a repo in Gitea
 
 Let's create a repository (repo) that we can use to store our files in from which we want to have our images/containers build.
 
-#. Open in a browser your Gitea interface and login using your set credentials (default is **nutanix** and **nutanix/4u**) by clicking on the Login icon (top right corner)
+#. Open in a browser your Gitea interface (\https://<IP ADDRESS OF DOCKER VM>:3000) and login using your set credentials (workshop uses **nutanix** and **nutanix/4u**) by clicking on the Login icon (top right corner). You might be auto logged in as the token is still valid
+
 #. Click on the **+** sign in the top right hand corner and select **+New Repository**
 
    .. figure:: images/1.png
@@ -45,7 +46,7 @@ Let's create a repository (repo) that we can use to store our files in from whic
    .. figure:: images/2.png
 
 #. Copy the https URL
-#. Open a command line or terminal on your laptop or Windows Tools Vm and run ``git config --global http.sslVerify false``. This step is necessary otherwise git is not willing to clone anything from a Version Control Manager using Self signed certificates. In the same command line or terminal session run the following two commands ``git config --global user.name "FIRST_NAME LAST_NAME"`` and ``git config --global user.email "MY_NAME@example.com"``
+#. Open a command line or terminal on your laptop or Windows Tools VM and run ``git config --global http.sslVerify false``. This step is necessary otherwise git is not willing to clone anything from a Version Control Manager using Self signed certificates. In the same command line or terminal session run the following two commands ``git config --global user.name "FIRST_NAME LAST_NAME"`` and ``git config --global user.email "MY_NAME@example.com"``
 
 #. On your laptop or the Windows Tools VM environment open VC, unless already open, and click **File -> New Window**
 
@@ -75,11 +76,11 @@ Let's create a repository (repo) that we can use to store our files in from whic
     This Repo is built for the Fiesta Application and has all needed files to build the containerized version of the Fiesta app.
     Original version of the Fiesta Application can be found at https://github.com/sharonpamela/Fiesta
 
-#. As we have Git integration installed in VC, we get a blue number in the extension left hand bar
+#. As we have Git integration installed in VC, we get a blue number on the Git extension (third icon from the top in the left hand pane)
 
    .. figure:: images/9.png
 
-#. Click the icon that has the *1* on it and provide a message in the Text field and click the :fa:`check` symbol (Commit)
+#. Click the icon that has the **1** on it and provide a message in the Text field and click the :fa:`check` symbol (Commit)
 #. Click **Always** on the Warning screen you get
 #. Click on the **...** icon next to the SOURCE CONTROL and select Push. This will push the new file onto the Repo in Gitea
 #. Provide the login information for Gitea
@@ -102,10 +103,10 @@ Configure Drone
 
 Drone needs to understand which Repos to track. To do this we will tell Drone what the repos are.
 
-#. Open Drone in a browser by using the URL **\http://<IP ADDRESS DOCKER VM>:8080**. Drone Authenticates via Gitea
+#. Open Drone in a browser by using the URL **\http://<IP ADDRESS DOCKER VM>:8080** (Drone Authenticates via Gitea)
 #. Click the **SYNC** button to have Drone grab the Repos of the user it authenticated against.
 #. After a few seconds you will see your **nutanix/Fiesta_Application** Repo
-#. Click the **Activate** button to the right hand side of the Repo
+#. Click the **ACTIVATE** button to the right hand side of the Repo
 #. Click the **ACTIVATE REPOSITORY** button
 #. In the **Main** section click the **Trusted** checkbox. That way we allow drone to use the Repo.
 #. Click the **SAVE** button
@@ -119,7 +120,7 @@ Use Drone to build an image
 #. Go to your VC instance and create a file in the root of FIESTA_APPLICATION called **.drone.yml**
 
    .. note::
-    If you don't see your FIESTA_APPLICATION click on the two Files icon
+    If you don't see your FIESTA_APPLICATION click on the two Files icon (first icon in the left hand pane)
 
 #. Copy the below content to the file
 
@@ -150,7 +151,7 @@ Use Drone to build an image
 #. Save the file. You will see **1** on the Git extension again after you have saved the file.
 #. Commit and push the file to the repo as you have done before by following thees steps
 
-   - Click on the Git extension( the one with the **1** on it
+   - Click on the Git extension (the one with the **1** on it)
    - Provide a message in the text field and click on the :fa:`check` icon
    - Click the three dots and click **Push**
 
@@ -158,8 +159,6 @@ Use Drone to build an image
 #. Open the **Drone UI -> nutanix/Fiesta_Application -> ACTIVITY FEED -> #1 -> build test image** which has errors.
 
    .. figure:: images/12.png
-
-   .. TODO:: change the image to reflect the correct information!!!   
 
 #. The steps has searched for a dockerfile, but couldn't find it. Let's fix that
 #. Back to VC, create a new file in the root of the **FIESTA_APPLICATION** and call it **dockerfile** and copy the below text (we used this before)
@@ -172,7 +171,7 @@ Use Drone to build an image
       # Install the needed packages
       RUN apk add --no-cache --update nodejs npm mysql-client git python3 python3-dev gcc g++ unixodbc-dev curl
       
-      # Create a location in the container for the Fiest Application Code
+      # Create a location in the container for the Fiesta Application Code
       RUN mkdir /code
       
       # Make sure that all next commands are run against the /code directory
@@ -200,8 +199,6 @@ Use Drone to build an image
 #. Create the following files and copy the respective content in the files as the build step is missing them...
 
    .. figure:: images/14.png
-
-   .. TODO:: change the image to reflect the correct information!!!   
 
    - set_privileges.sql
 
@@ -253,15 +250,11 @@ Use Drone to build an image
 
    .. figure:: images/15.png
 
-   .. TODO:: change the image to reflect the correct information!!!
-
 #. Switch the VC window to the **docker VM** so we can use the terminal to run some commands
 #. Run ``docker image ls`` to see our create image via the CI/CD pipeline
 
 
    .. figure:: images/16.png
-
-   .. TODO:: change the image to reflect the correct information!!!
 
 ------
 
@@ -280,7 +273,7 @@ In a CI/CD pipeline testing is very important and needs to be run automatically.
         image: fiesta_app:${DRONE_COMMIT_SHA:0:6}
         pull: if-not-exists
         environment:
-          DB_SERVER: 10.42.37.59
+          DB_SERVER: <IP ADDRESS OF MARIADB SERVER>
           DB_PASSWD: fiesta
           DB_USER: fiesta
           DB_TYPE: mysql
@@ -298,14 +291,13 @@ In a CI/CD pipeline testing is very important and needs to be run automatically.
     
    .. danger::
      Make sure you have the **-name** at the same indent as the already **-name** section in the file. Otherwise you'll get an error message like below...
+     Also change the <IP ADDRESS OF MARIADB SERVER> to the correct IP address
 
      .. figure:: images/17.png
    
    This is how it should look like
 
    .. figure:: images/18.png
-
-   .. TODO:: change the image to reflect the correct information!!!
 
 #. This step will do the following:
 
@@ -319,7 +311,8 @@ In a CI/CD pipeline testing is very important and needs to be run automatically.
      - can we change a file that exists after the git clone command
      - show the end result of the changed config file
   
-#. Drone will only move to the next step if the previous step was successful. Save the file, commit and push to Gitea and open the Drone UI.
+#. Save the file, commit and push to Gitea and open the Drone UI.
+#. Drone will only move to the next step if the previous step was successful.
 
    .. figure:: images/19.png
 
@@ -337,6 +330,9 @@ For images to be uploaded, we need to do two things, 1) We need to tag images we
 Manual upload of images
 ***********************
 
+.. warning::
+   The below steps are using the **devnutanix** as the user name for the dockerhub username. you have to use **YOUR** dockerhub username and password!!
+
 #. Login to your Docker VM, if not already done, using **root** and **nutanix/4u** as the credentials or use your terminal in VC both options work.
 #. Run the command ``docker login`` and use your credentials you used to set up your Dockerhub account
 
@@ -347,7 +343,7 @@ Manual upload of images
 
    .. figure:: images/21.png
 
-#. Run ``docker image tag fiesta_app:15b0c0 devnutanix/fiesta_app:1.0`` this will create a new image which will be tagged **devnutanix/fiesta_app** with version **1.0**
+#. Run ``docker image tag fiesta_app:15b0c0 devnutanix/fiesta_app:1.0`` (the version **15b0c0** came from step 6 in the **Test the build images** screenshot. Please use yours as mentioned in the Drone UI) this will create a new image which will be tagged **devnutanix/fiesta_app** with version **1.0**
 #. Running ``docker image ls`` is showing the image in the list
 
    .. figure:: images/22.png
@@ -366,7 +362,7 @@ Now that we can do this manually, let's get drone to do it for us the next time.
 CI/CD Upload of images
 **********************
 
-#. Open the VC instance where you have changed, created, committed and pushed files before.
+#. Open the VC instance where you have changed, created, committed and pushed files, like **.drone.yml** before.
 #. Open the .drone.yml file and add the following part (before the **volumes** section!)
 
    .. code-block:: yaml
@@ -392,14 +388,14 @@ CI/CD Upload of images
 #. Save the file. **DON'T COMMIT AND PUSH YET!!!!** we need to make a small change to Drone to make the step work
 #. As we are using the **from_secret** parameter we need to tell Drone what the secret is. Open the Drone UI (\http://<IP ADDRESS OF DOCKER VM>:8080)
 #. Click on your **Fiesta_Application repository -> SETTINGS**
-#. Under the **Secrets** section type the following:
+#. Under the **Secrets** section type the following - Hit the **ADD SECRET** button after each line:
 
    - **dockerhub_username** - Your DockerHub Account name (we will use devnutanix)
    - **dockerhub_password** - The password of the Dockerhub Account
 
    .. figure:: images/25.png
 
-#. Return to the VC instance we left earlier and run the Commit and push step to get the CI/CD running. The end stage will be a push to the Dockerhub. The end of the CI/CD Pipeline should be that we have three images/versions in the Dockerhub environment (the below image is composed out of Drone UI and Dockerhub UI)
+#. Return to the VC instance we left earlier and run the Commit and push step via the Git extension, to get the CI/CD running. The end stage will be a push to the Dockerhub. The end of the CI/CD Pipeline should be that we have three images/versions in the Dockerhub environment (the below image is composed out of Drone UI and Dockerhub UI)
 
    .. figure:: images/27.png
 
@@ -419,6 +415,7 @@ As we already deployed our own build Fiesta_App image in a former part of the wo
     
        - name: Deploy newest image
          image: docker:latest
+         pull: if-not-exists
          environment:
            USERNAME:
              from_secret: dockerhub_username
@@ -428,12 +425,12 @@ As we already deployed our own build Fiesta_App image in a former part of the wo
            - name: docker_sock
              path: /var/run/docker.sock
          commands:
-           - docker login -u $USERNAME -p $PASSWORD
-           - docker pull devnutanix/fiesta_app:latest
            - if [ `docker ps | grep Fiesta_App | wc -l` -eq 1 ]; then echo "Stopping existing Docker Container...."; docker stop Fiesta_App; else echo  "Docker container has not been found..."; fi
            - sleep 10
            - docker run --name Fiesta_App --rm -p 5000:3000 -d devnutanix/fiesta_app:latest
 
+#. Save the file, Commit and push the image
+#. This will make drone also deploy the container
 
 -------
 
@@ -465,9 +462,8 @@ We are also going to recreate the images, but that will be solved by the CI/CD p
 Change runapp.sh
 ****************
 
-#. Open the VC that you used to create the runapp.sh earlier (you should have the .drone.yml and dockerfile in the the same directory)
-#. Select all content and remove this from the file
-#. Copy and paste the following content in the runapp.sh file
+#. Open the VC that you used to create the **runapp.sh** earlier (you should have the .drone.yml and dockerfile in the the same directory)
+#. Exchange **all** content of the file with the below content
 
    .. code-block:: bash
 
@@ -590,6 +586,7 @@ Change runapp.sh
 
         - name: Deploy newest image
           image: docker:latest
+          pull: if-not-exists
           environment:
             USERNAME:
               from_secret: dockerhub_username
@@ -609,8 +606,6 @@ Change runapp.sh
             - name: docker_sock
               path: /var/run/docker.sock
           commands:
-            - docker login -u $USERNAME -p $PASSWORD
-            - docker pull $USERNAME/fiesta_app:latest
             - if [ `docker ps | grep Fiesta_App | wc -l` -eq 1 ]; then echo "Stopping existing Docker Container...."; docker stop Fiesta_App; else echo "Docker container has not been found..."; fi
             - sleep 10
             - docker run --name Fiesta_App --rm -p 5000:3000 -d -e DB_SERVER=$DB_SERVER -e DB_USER=$DB_USER -e DB_TYPE=$DB_TYPE -e DB_PASSWD=$DB_PASSWD -e DB_NAME=$DB_NAME $USERNAME/fiesta_app:latest
@@ -622,9 +617,11 @@ Change runapp.sh
 
 #. Save the file
 #. Open the Drone UI so we can set the variables/parameters we need during the different steps of the CI/CD pipeline
+#. Open under your repository click the **SETTINGS** tab
+#. Scroll a bit down to the **Secrets** section
 #. Create the following and their values (click the **ADD A SECRET** button to save the secret)
 
-   - **db-server_ip** - <IP ADDRESS OF MARIADB SERVER>
+   - **db_server_ip** - <IP ADDRESS OF MARIADB SERVER>
    - **db_passwd** - fiesta
    - **db_user** - fiesta
    - **db_type** - mysql
@@ -632,12 +629,12 @@ Change runapp.sh
 
    .. figure:: images/28.png
 
-#. In Drone click the **ACTIVITY FEED** text to return to the activity screen
-#. Now go back to the VC UI and Commit and Push the the files. As soon as you have done so, return to the Drone UI to see the steps being run using the created variables/parameters
+#. In Drone click the **ACTIVITY FEED** text (top of the screen) to return to the activity screen
+#. Now go back to the VC UI and Commit and Push the changed files. As soon as you have done so, return to the Drone UI to see the steps being run using the created variables/parameters
 
    .. figure:: images/29.png
 
-#. To see the progress of the container switch to the VC that we used to connect to the docker vm, or use a ssh session to the docker server and run ``docker logs --follow Fiesta_App``. The process will take approx 2-3 minutes. Wait to open the browser till you see a message ``[1]   On Your Network:  http://172.17.0.6:3000``.
+#. To see the progress of the container switch to the VC that we used to connect to the docker vm, or use a ssh session to the docker server and run ``docker logs --follow Fiesta_App``. The process will take approx 2-3 minutes. Wait to open the browser till you see a message like ``On Your Network:  http://172.17.0.6:3000``.
 #. Point your browser to **\http://<IP ADDRESS DOCKER VM>:5000/Products** and you'll see the Fiesta Application as you have seen before.
 
 ------

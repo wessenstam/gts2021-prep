@@ -16,11 +16,14 @@ To do the step up of the Fiesta Application we are going to do two things
 #. Change the **runapp.sh** so it doesn't start all the installation steps for the Application
 #. Change the test step in **.drone.yml**
 
+.. warning::
+   Please follow the steps to the letter as they are dependent on each other. When we save a file, just save and **don't commit and/or push** the files!!
+
 Change dockerfile
 ^^^^^^^^^^^^^^^^^
 
-#. Open your VC that you used before to manipulate the runapp.sh, .drone.yml and the dockerfile
-#. Delete all lines in the dockerfile and copy paste the following into the file
+#. Open your VC that you used before to manipulate the **runapp.sh, .drone.yml** and the **dockerfile**
+#. Exchange all content in the dockerfile with the content below
 
    .. code-block:: yaml
 
@@ -51,7 +54,7 @@ Change dockerfile
       FROM alpine:3.11 as Final_Image
       
       # Install some needed packages
-      RUN apk add --no-cache --update nodejs npm git mysql-client
+      RUN apk add --no-cache --update nodejs npm mysql-client
       
       # Get the NMP nodemon and install it
       RUN npm install -g nodemon
@@ -68,7 +71,7 @@ Change dockerfile
       ENTRYPOINT [ "/code/runapp.sh"]
       EXPOSE 3001 3000
 
-#. Save the file **DON'T COMMIT AND PUSH TO GITEA!!**
+#. Save the file
 
 Change runapp.sh
 ^^^^^^^^^^^^^^^^
@@ -108,16 +111,15 @@ Now that the dockerfile is building most of the work that in earlier images have
       cd /code/Fiesta
       npm start
 
-#. Save the file **DON'T COMMIT AND PUSH TO GITEA!!**
-
+#. Save the file
 
 Change the .drone.yml file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 #. Open the **.drone.yml** file
-#. Remove the line ``- git clone https://github.com/sharonpamela/Fiesta /code/Fiesta``
+#. Under the **Test local built container** section, remove the line ``- git clone https://github.com/sharonpamela/Fiesta /code/Fiesta``
 #. Save the file
-#. Commit and push the files to Gitea and look at the Drone UI to see the container being build
+#. **Commit and push** the chnaged files to Gitea and look at the Drone UI to see the container being build
 #. As you can see, the build phase is taking more time as it needs to run multiple step.
 
    .. figure:: images/1.png
@@ -135,7 +137,7 @@ Check size difference
 *********************
 
 #. Open a ssh session to the docker vm (using your other VC window or via terminal/putty)
-#. Run ``docker image ls`` to see the size of the images. As we can see the image has gone from 371MB to 293 MB
+#. Run ``docker image ls`` to see the size of the images. As we can see the image has gone from 371 MB to 277 MB
 
    .. figure:: images/3.png
 

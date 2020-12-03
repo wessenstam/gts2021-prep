@@ -18,11 +18,11 @@ To run the workshop some extra resources are needed on your laptop (besides Term
 
 .. note::
 
-   You can also use the Windows Tool VM as it has Visual Code installed. Just make sure you update it before you install the extensions. That way you don't "messup" your laptop.
+   You can also use the Windows Tool VM as it has Visual Code installed. You have to deploy it yourself as it is not being deployed by default. **Just make sure you update it before you install the extensions**. You can force the update by clicking **Help -> Check for Updates...**. If there is an update available the :fa:`gear` icon (bottom of the left pane) will shown a **1**. Click it and then click **Install update**. In the message that will apear, right bottom corner, Click **Restart** to update VC. That way you don't "mess up" your laptop.
 
 The following resources are needed for the workshop:
 
-- Visual Code (https://code.visualstudio.com/download). After installation of Visual Code, please install the following extensions:
+- Visual Code (VC) (VC can be found in the Tools map on the desktop of the Windows Tools VM. If not installed on your laptop: https://code.visualstudio.com/download), please install the following extensions:
 
   - YAML (https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml)
   - GitLens (https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens)
@@ -34,12 +34,11 @@ The following resources are needed for the workshop:
   - Shell Syntax (https://marketplace.visualstudio.com/items?itemName=bmalehorn.shell-syntax)
   - Bracket Pair Colorizer 2 (https://marketplace.visualstudio.com/items?itemName=CoenraadS.bracket-pair-colorizer-2)
 
-  To install the extensions use the extensions button in VC and use the Search Extensions field to find and install them.
+  To install the extensions use the extensions button (left hand pane, fourth icon from the top) in VC and use the Search Extensions field to find and install them.
 
   .. figure:: images/1.png
 
-- GitDesktop (https://desktop.github.com/). For Linux GitKraken can be used (https://www.gitkraken.com/).
-- Docker Hub account is needed for saving/uploading the images for the Fiesta application
+- Docker Hub account is needed for saving/uploading the images for the Fiesta application. Create an account using http://hub.docker.com.
 - Blueprint of the Dev Environment to you are going to deploy. This saves you in building the environment. The blueprint can be download :download:`here <Docker MariaDB FiestaApp.json>`.
 
 Prepare your environment
@@ -54,11 +53,13 @@ For this workshop to be run, we need to prepare the environment. Follow the next
 
 Create your project
 ^^^^^^^^^^^^^^^^^^^
-Projects are the logical construct that integrate Calm with Nutanix's native Self-Service Portal (SSP) capabilities, allowing an administrator to assign both infrastructure resources and the roles/permissions of Active Directory users/groups to specific Blueprints and Applications. By using different projects assigned to different clusters and users, administrators can ensure that workloads are deployed the right way each time.  For example, a developer can be a Project Admin for a dev/test project, so they have full control to deploy to their development clusters or to a cloud, while having Read Only access to production projects, allowing them access to logs but no ability to alter production workloads.
+Projects are the logical construct that integrate Calm with Nutanix' native Self-Service Portal (SSP) capabilities, allowing an administrator to assign both infrastructure resources and the roles/permissions of Active Directory users/groups to specific Blueprints and Applications. By using different projects assigned to different clusters and users, administrators can ensure that workloads are deployed the right way each time.  For example, a developer can be a Project Admin for a dev/test project, so they have full control to deploy to their development clusters or to a cloud, while having Read Only access to production projects, allowing them access to logs but no ability to alter production workloads.
 
 Configure users, cluster and network to use
 *******************************************
 
+#. Open your assigned PRISM Central
+#. Click the :fa:`bars` **->  Calm**
 #. Within the Calm UI, Select |proj-icon| **Projects** from the sidebar.
 
    .. figure:: images/calm3/projects1.png
@@ -109,8 +110,10 @@ Configure users, cluster and network to use
    .. figure:: images/projects_infrastructure1.png
 
 #. Click **Save & Configure Environment**.
+#. Wait a few minutes till the spinning wheel in the **Save & Configure Environment** button has stopped and you see your project appear when you click on the |proj-icon|
 
-
+   .. note::
+      If after 5 minutes you don't see your project show up, please refresh your browser.
 ------
 
 Configure Environment
@@ -133,11 +136,14 @@ Now that we have set the users, their roles, which cluster and networks to use, 
 
 As we are mostly using the Linux O/S in this workshop we are just configuring these parameters.
 
+#. When you dropped back to the Projects, click your created project to start the configuration
 #. In the **Enviroment** part we're assigning the parameters needed for Calm to be able to deploy VMs
 
    .. figure:: images/calm3/environment.png
 
-#. In the **VM Configuration** area, provide the **vCPU, Cores per vCPU** and the **Memory (GiB)** fields with the value of **1**
+#. In the **VM Configuration** area, provide the VM Name as @@{initials}@@_VM
+
+#. Provide the **vCPU, Cores per vCPU** and the **Memory (GiB)** fields with the value of **1**
 
 #. Under **DISKS (1)** Select the *CentOS7.qcow2* under the Image field. Leave the other options in this area of the configuration.
    
@@ -151,7 +157,7 @@ As we are mostly using the Linux O/S in this workshop we are just configuring th
 
    .. figure:: images/calm3/credential.png
 
-#. In the new screen use **root **as the user and **nutanix/4u** as the password. Click on **Done** if your are ready.
+#. In the new screen use **centos** as the Credential Name, **root** as the user and **nutanix/4u** as the password. Click on **Done** if your are ready.
 
   
    .. figure:: images/calm3/credential-2.png
@@ -174,7 +180,7 @@ Upload the Blueprint
 
 #. Click on the **Blueprint** (|bp_icon|) icon
 #. Upload the downloaded blueprint
-#. Rename the Bueprint to *initials* **-Docker MariaDb Fiesta**
+#. Rename the Bueprint to *initials* **-Docker MariaDB Fiesta**
 #. Assign it to your project that you have created.
 #. Click the **Upload** button. 
 
@@ -197,7 +203,7 @@ Configure the blueprint
 #. Check the VMs configuation
 
    - Click on the **Docker_VM** in the Services pane (on the dark blue bakground)
-   - Check the VM Name is **@@{initilas}@@-<NAME OF THE SERVISE>>**
+   - Check the VM Name is **@@{initilas}@@-<NAME OF THE SERVICE>>** (Docker, MariaDB or Fiesta)
 
      .. figure:: images/5.png
 
@@ -206,7 +212,7 @@ Configure the blueprint
    - **CONNECTION** - CentOS
 
 #. Repeat for the other two VMs using their corresponding Service name as the VM's name
-#. Click the **Save** button. If all went well the **Launch** button shoul dbecome active
+#. Click the **Save** button. If all went well the **Launch** button should become active
 
 Deploy the blueprint
 ********************
@@ -224,7 +230,7 @@ Deploy the blueprint
 
    .. note::
 
-    The Fiest App VM will be build last as it has a dependency on your MariaDB VM. You can see the dependency by clicking on **Manage -> Create and click the Eye button**
+    The Fiesta App VM will be build last as it has a dependency on your MariaDB VM. You can see the dependency by clicking on **Manage -> Create** and click the :fa:`eye` **button**
 
     .. figure:: images/7.png
 

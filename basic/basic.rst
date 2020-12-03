@@ -20,12 +20,12 @@ This part of the workshop is all about:
 - Get the installation of the needed packages
 - Get the Fiesta Application as a container
 
-Analyse the original Fiesat Application
+Analyse the original Fiesta Application
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Let's start analyzing the installation of the Fiesta Application by using the Blueprint that you have deployed earlier.
 
-#. In PRISM Central open :fa:`bars` and select **Services -> Calm**
+#. In PRISM Central open :fa:`bars` and select **Calm**
 #. Click the Blueprint |bp_icon| icon
 #. Open the uploaded and deployed blueprint
 #. Click on the **Fiesta_App_VM Services -> Packages -> Configure install**
@@ -33,7 +33,7 @@ Let's start analyzing the installation of the Fiesta Application by using the Bl
    .. figure:: images/1.png
 
 #. You see three steps that are run for the installation of the Fiesta Application.
-#. Open the second step, as the first one is for setting the hostname and the O/S related updates.
+#. Open the second step (Install npm), as the first one is for setting the hostname and the O/S related updates.
 #. In that step you see what is happening:
    
    - Install some packages needed for the application to run
@@ -54,33 +54,14 @@ Get the basic container
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 During this part we are going to install our first container. The building of container are being done using a specific file. This file is called ``dockerfile``.
-Follow these steps to create the first container. As sqpce consumed by the container is crucial we are going to rebuild our Fiesta Application wit the use of Alpine Linux. This is a small Linux distribution and very commonly used by containe builders.
+Follow these steps to create the first container. As space consumed by the container is crucial we are going to rebuild our Fiesta Application wit the use of Alpine Linux. This is a small Linux distribution and very commonly used by containe builders.
 
-#. Login to your docker vm using SSH as **root** and the passwrod **nutanix/4u**
+#. Login to your docker vm using SSH as **root** and the password **nutanix/4u**
 #. Run the command ``mkdir github``
 #. Run ``cd github``
 #. As we will be creating the Fiesta Application later in this workshop, let's clone the Github repository so we have it. Run ``git clone https://github.com/sharonpamela/Fiesta``
-
-   .. note::
-        If you get an error message **-bash: git: command not found** install it using ``yum install -y git``
-
-   .. figure:: images/3.png
-
 #. Create a ``dockerfile`` using the command ``vi dockerfile`` (we are using vi as the built-in editor during this workshop, nano works as well)
-#. Copy the following code:
-
-   .. code-block:: dockerfile
-
-      FROM alpine:3.11
-
-#. In the ``vi`` session press the **i** key to open the **-- INSERT --** capability (shown in the left bottom corner)
-#. Paste the copied text and run ``<ESC>:wq!`` to dave and close the file
-#. Run the command ``docker build .`` to have thecontainer being build
-
-   .. figure:: images/4.png
-
-#. Now we have a Alpine 3.11 container ready that can't do much, but your first container is ready...
-#. Reopen the dockerfile again using vi by ``vi dockerfile`` and copy the following code:
+#. Copy and paste the following code:
 
    .. code-block:: dockerfile
 
@@ -109,6 +90,7 @@ Follow these steps to create the first container. As sqpce consumed by the conta
       # Expose port 30001 and 3000 to the outside world
       EXPOSE 3001 3000
 
+#. Save and close the file. For vi use **<ESC>:wq!**.
 #. Create a new file using ``vi set_privileges.sql`` and copy/paste the following text in that file
 
    .. code-block:: sql
@@ -162,8 +144,12 @@ Follow these steps to create the first container. As sqpce consumed by the conta
 
    .. figure:: images/5.png
 
-#. Now that we have al needed files, let's rerun ``docker build .`` to recreated the container. This takes approxamitely 1 minute
-#. Run ``docker image ls`` t see our image we've just build
+#. Now that we have al needed files, let's run ``docker build .`` to create the container. This takes approximately 1 minute
+
+   .. note:: 
+       If you get a message stating **You have reached your pull limit...** ask the leading SE for a solution
+
+#. Run ``docker image ls`` to see our image we've just build
 
    .. figure:: images/6.png
 
@@ -174,8 +160,6 @@ The alpine image with tag 3.11 is seen and an image with an ID, but they don't m
 
    .. figure:: images/7.png
 
-   .. TODO:: change the image to reflect the correct information!!!
-
 #. Let's start the docker image to become a container by running ``docker run -d --rm --name Fiesta_App fiesta_app:1.0``
 
    Explanation of the command :
@@ -185,24 +169,27 @@ The alpine image with tag 3.11 is seen and an image with an ID, but they don't m
    - ``-d`` run as a Daemon in the background
 
 #. Using ``docker logs --follow Fiesta_App`` to see the console log of the container
-#. After the application has been started you will see something like the below
+#. After the application has been started you will see something like the below (approx. 2.5 minutes)
 
    .. figure:: images/8.png
 
 So the application has been started and the database can be received.
 
 .. warning::
-    If the below error log lines are seen (**Unhandled rejection SequelizeConnectionError.....**), the database cannot be accessed. Possible first reason is that we have forgotten to change the IP address of the database, or the IP address is set wrongly.
+    If the below error log lines are seen (**Unhandled rejection SequelizeConnectionError.....**), the database cannot be accessed. Possible first reason is that we have forgotten to change the IP address of the database, or the IP address is set wrongly. Check the IP address of the MariaDB server (via :fa:`bars` **-> Calm -> Applications -> your Application  -> Services -> MariaDB** ) and make the changes in **runapp.sh**, build the container again and start the container again.
 
     .. figure:: images/8a.png
 
-That means the application is running as a container. BUT if you would open the URL as mentioned in the screenshot on port 3000, of your dockerVM, you won't get any answer. The reason for this is that the IP address of the container is internal to the Docker environment. To make this work we have to tell the docker engine to "open" port 3000 to the outside world.
+That means the application is running as a container. BUT if you would open the URL as mentioned in the screenshot on port 3000, of your docker VM, you won't get any answer. The reason for this is that the IP address of the container is internal to the Docker environment. To make this work we have to tell the docker engine to "open" port 3000 to the outside world.
 
+#. Use <CTRL>+C to drop back to the prompt
 #. Stop the container running ``docker stop Fiesta_App``. This will stop the container and after that remove the container from the docker engine
 #. Now using the **-p 5000:3000** parameter in the ``docker run -d --rm -p 5000:3000 --name Fiesta_App fiesta_app:1.0`` command we are telling the Docker Engine to expose port 5000 to the outside world. 
 #. Wait till you see the same output in the logs as you have seen earlier (from the ``docker logs --follow Fiesta_App`` command) and open a browser. URL to be used is **\http://<IP-ADDRESS-DOCKER-VM>:5000/products**. Now you should see the Fiesta App and the data from the database.
 
    .. figure:: images/9.png
+
+#. Let's stop the docker container as we don't need it for now in the running state. Run ``docker stop Fiesta_App``.
 
 ------
 
@@ -210,17 +197,15 @@ That means the application is running as a container. BUT if you would open the 
 
     <H1><font color="#AFD135"><center>Congratulations!!!!</center></font></H1>
 
-We have just created our first container version of the Fieta Application and it is running... **But** we still need to do a few thing...
+We have just created our first container version of the Fiesta Application and it is running... **But** we still need to do a few thing...
 
 - The way of working using **vi** or **nano** is not very effective and ready for human error
 - Variables needed, have to be set outside of the image we build
-- The container build takes a long time and is a tedeous work including it's management
+- The container build takes a long time and is a tedious work including it's management
 - The start of the container takes a long time
 - The image is only available as long as the Docker VM exists
 
-The next modules in this workshop are going to address all of these buts.... Let's go for it!
-
-
+The next modules in this workshop are going to address all of these.... Let's go for it!
 
 
 .. |proj-icon| image:: ../images/projects_icon.png

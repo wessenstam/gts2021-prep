@@ -12,12 +12,12 @@ Visual Code
 
 As we have Visual Code already installed and added extension, we are going to use it.
 
-#. Start Visual Code(VC) in your Windows Tools VM or your laptop
+#. Start Visual Code (VC) in your Windows Tools VM or on your laptop
 #. Click in VC on **View -> Command Palette...**
 
    .. figure:: images/1.png
 
-#. Type **Remote SSH** and select ** Remote-SSH: Connect Current Window to Host...**
+#. Type **Remote SSH** and select **Remote-SSH: Connect Current Window to Host...**
 
    .. figure:: images/2.png
 
@@ -34,22 +34,21 @@ As we have Visual Code already installed and added extension, we are going to us
 
    .. figure:: images/3.png
 
-#. If not already selected, click in the left pane on the **Files** button and select **Open Folder**
+#. If not already selected, click in the left pane on the **Files** button (left hand pane, first icon) and select **Open Folder**
 
    .. figure:: images/4.png
 
-#. Provide the **/** as the folder you want to open
-#. It will take some time before it opens as VC needs to install and configure the remote host. This takes approximately <1 minute
-#. Now you should see the folder structure of the VM, open /root and you will see everything including the earlier created **github** directory
-#. Open the **github** directory and you wil find the same information as you had created earlier using ``vi`` or ``nano``
+#. Provide the **/** as the folder you want to open and click on **OK**
+#. It will take some time before it opens as VC needs to install and configure the remote host. This takes approximately <1 minute (you will be asked for hte password again)
+#. Now you should see the folder structure of the VM, open **/root/github** and you will see everything created earlier
 
    .. figure:: images/5.png
 
-This way of chnaging files is easier then using the ``vi`` or ``nano``. Even though quick changes can be done using those tools.
+This way of changing files is easier then using the ``vi`` or ``nano``. Even though quick changes can be done using those tools.
 
 .. note::
 
-    During the working with VC, you might get pop-up messages due to updates or extensions haveing some extra information like the below screenshot. It is up to you what to do with them. Most messages can be denied by clicking the **X** in the right hand top corner. They have no influence on the workshop...
+    During the working with VC, you might get pop-up messages due to updates or extensions having some extra information like the below screenshot. It is up to you what to do with them. Most messages can be denied by clicking the **X** in the right hand top corner. They have no influence on the workshop...
 
     .. figure:: images/message-box.png
 
@@ -77,21 +76,21 @@ As we already have created the needed infrastructure using docker-compose we're 
 
 #. In the terminal run the following commands to get the needed directories
 
-   - ``mkdir -p /docker-location/gitea``
-   - ``mkdir -p /docker-location/drone/server``
-   - ``mkdir -p /docker-location/drone/agent``
-   - ``mkdir -p /docker-location/mysql``
+   .. code-block:: bash
+
+       mkdir -p /docker-location/gitea
+       mkdir -p /docker-location/drone/server
+       mkdir -p /docker-location/drone/agent
+       mkdir -p /docker-location/mysql
 
 #. In the Terminal of VC, run ``cd ~/github``
 #. Run the command ``curl --silent https://raw.githubusercontent.com/wessenstam/gts2021-prep/main/CI-CD%20Pipeline/docker_files/docker-compose.yaml -O`` to pull the yaml file
 
-#. Open in VC the **docker-compose.yaml** file by clicking in the left hand pane
+#. Open in VC the **docker-compose.yaml** file by clicking in the left hand pane (you may have to click the refresh button (the open circle next to the text **/[SSH: IPADDRESS]
 
    .. figure:: images/8.png
 
-#. Change all **<DOCKER_VOLUME>** mentionings into **docker-location** via the Replace functionality in VC. 
-#. Save the chnage **docker-compose.yaml** file
-#. In the terminal screen run the command ``docker-compose create db gitea`` and wait for the command prompt to return. You will see that images are pulled and at the end that the services have been created
+#. In the terminal screen run the command ``docker-compose create db gitea`` and wait for the command prompt to return. You will see that images are pulled and at the end that the two services have been created
 
    .. figure:: images/9.png
 
@@ -111,9 +110,9 @@ To make sure we can use https with Gitea, we need to go into the gitea docker co
 
    .. figure:: images/10.png
 
-#. Copy the *.pem files using ``cp /*.pem /data/gitea``
+#. Copy the \*.pem files using ``cp /*.pem /data/gitea``
 #. Run ``chmod 744 /data/gitea/*.pem``
-#. Close the docker connection using **<<CTRL>+d**
+#. Close the docker connection using **<CTRL>+d**
 #. Open a browser and point it to **http://<IP ADDRESS DOCKER VM>:3000**
 #. Make the following changes:
    
@@ -135,7 +134,8 @@ To make sure we can use https with Gitea, we need to go into the gitea docker co
 Now you will receive an error that **This site can’t provide a secure connection**, but we are going to change that. 
 In VC, as we have all files for the containers being saved on the docker VM in the earlier created folders in /docker-location, we can change a file that is needed by Gitea and holds the config. 
 
-#. Open the file **/docker-location/gitea/conf/app.ini** and make the follwing changes under the **[server]** section:
+#. Open your VC
+#. Open the file **/docker-location/gitea/conf/app.ini** and make the following changes under the **[server]** section:
 
    - **PROTOCOL**  = https
    - **CERT_FILE** = cert.pem
@@ -143,13 +143,10 @@ In VC, as we have all files for the containers being saved on the docker VM in t
 
      .. figure:: images/12.png
 
-#. Save the file and restart the container using ``docker-compose restart gitea``
-#. Reloading the browser page will show an error on the certificate, which is logical as we are now using a Self Signed certificate. Use the normal ways to get the login screen.
+#. Save the file and restart the container using ``docker-compose restart gitea`` in your terminal windows in VC
+#. Reloading the browser page will show an error on the certificate, which is logical as we are now using a Self Signed certificate. Use the normal ways to get to the login screen.
 #. The first user will be the admin user of the Gitea application (default)
-#. Click the **Register button** to create an account. Provide whatever you want. We are going to use **nutanix** and **nutanix/4u** during the workshop as examples.
-
-   .. figure:: images/13.png
-
+#. Click the **Register button** to create an account. Provide whatever you want. We are going to use **nutanix**, **nutanix@atnutanix.com** and **nutanix/4u** during the workshop as examples.
 #. Click the Register button to have your account created. Welcome to Gitea!!!
 
    .. figure:: images/14.png
@@ -175,7 +172,7 @@ As Drone will use Gitea for its authentication, we need to get some parameters f
 
    .. figure:: images/16.png
 
-#. Open the docker-compose.yaml file and paste the values in their field names **DRONE_GITEA_CLIENT_ID** and **DRONE_GITEA_CLIENT_SECRET**
+#. Open the **docker-compose.yaml** file and paste the values in their field names **DRONE_GITEA_CLIENT_ID** and **DRONE_GITEA_CLIENT_SECRET**
 
    .. figure:: images/17.png
 
@@ -189,16 +186,20 @@ As Drone will use Gitea for its authentication, we need to get some parameters f
 
    - **DRONE_RPC_HOST=** <IP ADDRESS OF DOCKER VM>
 
-#. Save the file
-#. Clink in Gitea UI the **Save** button
-#. Create and start the drone server and agent container by running ``docker-compose create drone-server drone-docker-runner`` and ``docker-compose start drone-server drone-docker-runner``
-#. Open a browser and point to **\http:<IP ADDRESS OF DOCKER VM>:8080**. This will try to authenticate the user **nutanix**, the defined user in Drone section in the docker-compose.yaml file with admin right
-
    .. warning::
 
-    If you have chosen a different username (not nutanix) in Gitea, make sure you change the needed parameters in the docker-compose.yaml file (drone-server section  **DRONE_USER_CREATE=username:nutanix,admin:true**)
+     If you have chosen a different username (not nutanix) in Gitea, make sure you change the needed parameters in the docker-compose.yaml file (drone-server section  **DRONE_USER_CREATE=username:nutanix,admin:true**)
 
+
+#. Save the file
+#. Click in Gitea UI the **Save** button and then the **Dashboard** text
+#. Open the Terminal in VC
+#. Create and start the drone server and agent container by running ``docker-compose create drone-server drone-docker-runner`` and ``docker-compose start drone-server drone-docker-runner``
+#. Open a browser and point to **\http:<IP ADDRESS OF DOCKER VM>:8080**. This will try to authenticate the user **nutanix**, the defined user in Drone section in the docker-compose.yaml file with admin right
 #. A warning **Authorize Application** message is shown, click on **Authorize Application**
+
+   .. figure:: images/19.png
+   
 #. The Drone UI will open with nothing in it
 
    .. figure:: images/18.png
