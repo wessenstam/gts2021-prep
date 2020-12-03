@@ -7,6 +7,9 @@ As you have noticed we have create our containerized version of Fiesta, but we h
 
 After we have the Visual Code setup and configured, we are going to set up our CI/CD pipeline using Drone (http://harness.io).
 
+.. note::
+   Estimated time **30 minutes**
+
 Visual Code
 -----------
 

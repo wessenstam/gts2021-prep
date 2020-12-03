@@ -7,6 +7,9 @@ As you may have noticed it takes a while before the Fiesta_App container is up a
 
 The reason for the time needed is that during the start of the container it has to run multiple npm commands to be ready. This part of the module is to see if we can speed this up and at the same time lower the size of the Fiesta_App image.
 
+.. note::
+   Estimated time **45 minutes**
+
 Multi step image build
 ----------------------
 

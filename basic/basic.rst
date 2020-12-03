@@ -10,6 +10,9 @@ High level steps:
 - use the Docker VM to build the containerized application
 - test the application by deploying the container
 
+.. note::
+   Estimated time **30 minutes**
+
 Build the container
 -------------------
 

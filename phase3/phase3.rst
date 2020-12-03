@@ -15,6 +15,10 @@ This part of the workshop is all about using
 
 - Tooling
 
+.. note::
+   Estimated time **45-60 minutes**
+
+
 Start using the CI/CD pipeline
 ------------------------------
 

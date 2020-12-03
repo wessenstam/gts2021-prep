@@ -11,6 +11,9 @@ This workshop is trying to teach the basic steps to get from an existing applica
 - Upload the containers to Docker hub registry
 - Deploy the new build container
 
+.. note::
+   Estimated time **45 minutes**
+
 Pre-requisite
 -------------
 
