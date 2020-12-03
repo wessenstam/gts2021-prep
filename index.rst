@@ -25,6 +25,15 @@
 
   phase3/phase3
   phase4/phase4
+
+.. toctree::
+  :maxdepth: 2
+  :caption: CICD and Era
+  :name: _cicd-era
+  :hidden:
+
+  phase5/phase5
+
   
 .. _getting_started:
 
