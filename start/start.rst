@@ -42,7 +42,7 @@ The following resources are needed for the workshop:
   .. figure:: images/1.png
 
 - Docker Hub account is needed for saving/uploading the images for the Fiesta application. Create an account using http://hub.docker.com.
-- Blueprint of the Dev Environment to you are going to deploy. This saves you in building the environment. The blueprint can be download :download:`here <Docker MariaDB FiestaApp.json>`.
+- Blueprint of the Dev Environment to you are going to deploy. This saves you in building the environment. The blueprint can be download :download:`here <Docker MariaDB FiestaApp.json>`. If you also have Era deployed, you can also use :download:`this blueprint <Docker MariaDB FiestaApp - ERA.json>`. The last blueprint will also register the MariaDB in Era.
 
 Prepare your environment
 ------------------------
@@ -183,7 +183,7 @@ Upload the Blueprint
 
 #. Click on the **Blueprint** (|bp_icon|) icon
 #. Upload the downloaded blueprint
-#. Rename the Bueprint to *initials* **-Docker MariaDB Fiesta**
+#. Rename the Bueprint to *initials* **-Docker MariaDB Fiesta**. If you have the Era version add **-Era** at the end of the name
 #. Assign it to your project that you have created.
 #. Click the **Upload** button. 
 
@@ -192,7 +192,7 @@ After the upload we have to configure the Blueprint so we can deploy it
 Configure the blueprint
 ***********************
 
-#. Click the Blueprint **Docker MariaDB FiestaApp** to open it.
+#. Open the uploaded Blueprint on clicking on its name
 #. Click on the **Credentials** button to set the credentials
 
    .. figure:: images/3.png
@@ -221,9 +221,20 @@ Deploy the blueprint
 ********************
 
 #. Deploy your Blueprint and provide the needed Name:
+   
+   For the None Era version of the blueprint:
 
    - **Name of the Application** - *Initials*-Dev-Environment
    - **initials** - your initials
+
+   For the the Era version also provide:
+
+   - **era_ip** - <IP ADDRESS OF THE ERA INSTANCE>
+   - **era_admin** - admin
+   - **era_passwd** - <GIVEN PASSWORD>
+
+     .. note::
+       The below screenshot is from the Era version of he Blueprint. The not Era blueprint will only have the initials field.
 
      .. figure:: images/6.png
 
