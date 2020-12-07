@@ -81,6 +81,7 @@ As we already have created the needed infrastructure using docker-compose we're 
 
    .. code-block:: bash
 
+       mkdir -p ~/github
        mkdir -p /docker-location/gitea
        mkdir -p /docker-location/drone/server
        mkdir -p /docker-location/drone/agent
@@ -88,11 +89,7 @@ As we already have created the needed infrastructure using docker-compose we're 
 
 #. In the Terminal of VC, run ``cd ~/github``
 #. Run the command ``curl --silent https://raw.githubusercontent.com/wessenstam/gts2021-prep/main/CI-CD%20Pipeline/docker_files/docker-compose.yaml -O`` to pull the yaml file
-
-#. Open in VC the **docker-compose.yaml** file by clicking in the left hand pane (you may have to click the refresh button (the open circle next to the text **/[SSH: IPADDRESS]
-
-   .. figure:: images/8.png
-
+#. To make sure we're not blocked by any rate limit on pulls, run ``docker login`` and authenticate using your dockerhub account you created earlier
 #. In the terminal screen run the command ``docker-compose create db gitea`` and wait for the command prompt to return. You will see that images are pulled and at the end that the two services have been created
 
    .. figure:: images/9.png
@@ -182,7 +179,7 @@ As Drone will use Gitea for its authentication, we need to get some parameters f
 #. Also change under the **drone-server** section in the docker-compose.yaml file
 
    - **DRONE_GITEA_SERVER=** \https://<IP ADDRESS OF DOCKER VM>:3000
-   - **DRONE_GITEA_SERVER=** \https://<IP ADDRESS OF DOCKER VM>:8080
+   - **DRONE_SERVER_HOST=** \https://<IP ADDRESS OF DOCKER VM>:8080
    - **DRONE_USER_CREATE=** <USERNAME> to **nutanix**
 
 #. Change under the **drone-docker-runner** section

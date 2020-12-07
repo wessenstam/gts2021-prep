@@ -94,14 +94,6 @@ Follow these steps to create the first container. As space consumed by the conta
       EXPOSE 3001 3000
 
 #. Save and close the file. For vi use **<ESC>:wq!**.
-#. Create a new file using ``vi set_privileges.sql`` and copy/paste the following text in that file
-
-   .. code-block:: sql
-
-      grant all privileges on FiestaDB.* to fiesta@'%' identified by 'fiesta';
-      grant all privileges on FiestaDB.* to fiesta@localhost identified by 'fiesta';
-
-#. Save and Close the file
 #. Create the last needed file ``vi runapp.sh`` and copy/paste the following:
 
    .. danger::
