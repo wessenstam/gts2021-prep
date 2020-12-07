@@ -634,18 +634,30 @@ Push your files to Gitea
 #. Scroll all the way down to see the new added item
 #. Change the URL to the production application by changing the port number from **5000** to **5050** and the new added item is NOT there. 
 
-Now that we have seen that we are working on two different database, let's roll the Development database back to the time we created the snapshot.
+Now that we have seen that we are working on two different database, the development area is complete. Whatever we do will have no impact on the production database!
 
-Refresh the development database
---------------------------------
+.. let's roll the Development database back to the time we created the snapshot.
 
-#. Open your Era instance
-#. Goto **Databases (drop down menu) -> Clones**
-#. Click the radio button in from of your *Initials* **-FiestaDB_DEV** clone
-#. Click the **Refresh** button
-#. Select under **Snapshot** your **First-Snapshot**
+    Refresh the development database
+    --------------------------------
+    
+    #. Open your Era instance
+    #. Goto **Databases (drop down menu) -> Clones**
+    #. Click the radio button in from of your *Initials* **-FiestaDB_DEV** clone
+    #. Click the **Refresh** button
+    #. Select under **Snapshot** your **First-Snapshot**
+    
+       .. figure:: images/16.png
+    
+    #. Click **Refresh**
+    #. Click **Operations** to follow the process (approx. 5-7 minutes)
 
-   .. figure:: images/16.png
+------
 
-#. Click **Refresh**
-#. Click **Operations** to follow the process (approx. 5-7 minutes)
+Takeaways
+---------
+
+- Ease of use for the deployment of a development environment using Era for database management
+- Use of Calm to deploy a development environment that integrates with Era
+- Use of a CI/CD and Era is quiet easy to set update
+- CI/CD pipeline to have a distinction between Production and Development.
