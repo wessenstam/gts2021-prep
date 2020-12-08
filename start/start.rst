@@ -259,7 +259,11 @@ Checking the deployment
 
    .. figure:: images/8.png
 
-#. Open a browser and use the IP address of the FiestApp VM and port 5001. That should open a webpage of the FiestApp. Example: **\http://10.42.37.83:5001**
+   .. note::
+
+      The screenshot is from the MariaDB Server, make sure you selected the FiestaApp service for its IP Address!
+
+#. Open a browser and use the IP address of the FiestApp VM and port 5001. That should open a webpage of the FiestaApp. Example: **\http://10.42.37.83:5001**
 #. Then click on **Products**. This should show a webpage wih text and some pictures. If you see that, the deployment has been successful.
 
    .. figure:: images/9.png
