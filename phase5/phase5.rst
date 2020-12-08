@@ -9,11 +9,12 @@ For this part of the workshop we are going to do the following:
 
 - Check the registration the deployed MariaDB in Era
 - Get the API calls for Clone the Production environment MariaDB database server if it doesn't exist
-- Update the runapp.sh script
-- If it does exist, refresh the database content so we have the latest Database entries from the production MariaDB database
+- Create a developer's version of the runapp.sh script
+- If a clone of the production database doesn't exist, create a clone of the database
 
 .. note::
-Estimated time **45-60 minutes**
+  
+  Estimated time **45-60 minutes**
 
 Check MariaDB registration in Era
 ---------------------------------
@@ -40,7 +41,7 @@ To be able to clone a Database and its Database Server we need to have a snapsho
 #. Select **Actions -> Snapshot**
 #. Type the name **First-Snapshot** and click the **Create** button
 
-   .. danger::
+   .. note::
 
       Make 110% sure you have typed it in as mentioned in this step, otherwise the deployment of the Development container will not work later in the script!!!
 
@@ -59,11 +60,6 @@ After we have the API calls we are going to use variables to set the correct val
 
 #. In your Era UI, click on **Time Machine** 
 #. Click the radio button in front of *Initials* **-FiestaDB_TM**
-
-   .. danger::
-
-      Be 100% sure you have typed the name of the snapshot as it is mentioned in the step you are about to do. If there is a typo, the script will fail during the creation of the Clone!!!
-
 #. Click **Actions -> Snapshot** and call it **First-Snapshot**
 #. Click on **Operations** (via the drop down menu or by clicking in the top right hand corner)
 #. Wait till the snapshot operation has ended before moving forward
@@ -99,7 +95,7 @@ After we have the API calls we are going to use variables to set the correct val
 
    .. figure:: images/4.png
 
-#. Take closer look at the curl command and especially at the JSON data being send (left hand side of the screen)
+#. Take a closer look at the curl command and especially at the JSON data being send (left hand side of the screen)
 #. The JSON data being send to the Era server is full of variable values
   
    - Era instance IP
@@ -116,7 +112,7 @@ After we have the API calls we are going to use variables to set the correct val
 
 #. Click the **Close** button and the **X** to close the Clone button.
 
-Now that we know how to get the API calls we are going to change the deployment so it calls the commands if needed.
+Now that we know how to get the API calls we are going to change the deployment with tour CI/CD pipeline so it calls the commands.
 
 Changes for Drone
 ----------------
@@ -124,8 +120,7 @@ Changes for Drone
 We need to tell drone to make a difference in the steps it needs to run.
 
 #. In VC open the **.drone.yml** file
-#. In the **Deploy newest image** section add to the **environment** part:
-#. Copy and paste below content in the **.drone.yml** file
+#. Copy and paste below content over the exiting content in the **.drone.yml** file
    
    .. code-block:: yaml
 
@@ -332,7 +327,7 @@ We need to tell drone to make a difference in the steps it needs to run.
 
    .. figure:: images/7.png
 
-Now we need that we see that Dron is capable of making a difference between braches (in .drone.yml you see the **when: branche: - master/dev**) we are going to use that to have Drone run different steps based on the branch.
+Now we know that Drone is capable of changing steps based on braches (in .drone.yml you see the **when: branche: - master/dev**) we are going to use that.
 
 Create a new branch in VC
 -------------------------
@@ -503,11 +498,11 @@ To make your life easier we have already created the needed content for the file
       npm start
 
    .. note::
-     This script will create:
+     This script will:
 
      - Check if there is a clone from the *Initials* **-MariaDB_VM** server, if not create one with the naming of:
        
-       - *Initials* **-MariaDB_DEV-VM** as teh Database server
+       - *Initials* **-MariaDB_DEV-VM** as the Database server
        - *Initials* **-FiestaDB_DEV** as the name of the cloned Database
        - *Initials* **-FiestaDB_DEV_TM** as the name of the Time Machine of the cloned Database
 
@@ -635,7 +630,7 @@ Push your files to Gitea
 #. Scroll all the way down to see the new added item
 #. Change the URL to the production application by changing the port number from **5000** to **5050** and the new added item is NOT there. 
 
-Now that we have seen that we are working on two different database, the development area is complete. Whatever we do will have no impact on the production database!
+Now that we have seen that we are working on two different database, the development area is complete. Whatever we do, it will have no impact on the production database!
 
 .. let's roll the Development database back to the time we created the snapshot.
 
