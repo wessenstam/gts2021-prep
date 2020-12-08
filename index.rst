@@ -52,7 +52,11 @@ If this knowledge doesn't exist, please follow `this Docker workshop <https://nu
 Agenda
 ++++++
 
-- 
+- Build containers using the Linux tools available
+- Use tooling and build a CI/CD Pipeline
+- Use the CI/CD pipeline
+- Refactor the container
+- (Optional) integrate Era in the CI/CD Pipeline
 
 Introductions
 +++++++++++++
