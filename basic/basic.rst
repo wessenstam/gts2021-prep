@@ -81,7 +81,6 @@ Follow these steps to create the first container. As space consumed by the conta
       WORKDIR /code
 
       # Copy needed files into the container
-      COPY set_privileges.sql /code/set_privileges.sql
       COPY runapp.sh /code
       
       # Make the runapp.sh executable
@@ -96,7 +95,7 @@ Follow these steps to create the first container. As space consumed by the conta
 #. Save and close the file. For vi use **<ESC>:wq!**.
 #. Create the last needed file ``vi runapp.sh`` and copy/paste the following:
 
-   .. danger::
+   .. note::
     
       Make sure you have changed the **<IP ADDRESS OF YOUR MARIADB SERVER>** to correspond to your MariaDB Database VM's IP Address in the below!!
 
@@ -142,7 +141,7 @@ Follow these steps to create the first container. As space consumed by the conta
 #. Now that we have al needed files, let's run ``docker build .`` to create the container. This takes approximately 1 minute
 
    .. note:: 
-       If you get a message stating **You have reached your pull limit...** ask the leading SE for a solution
+       If you get a message stating **You have reached your pull limit...** ask the leading SE for the solution
 
 #. Run ``docker image ls`` to see our image we've just build
 
@@ -164,13 +163,13 @@ The alpine image with tag 3.11 is seen and an image with an ID, but they don't m
    - ``-d`` run as a Daemon in the background
 
 #. Using ``docker logs --follow Fiesta_App`` to see the console log of the container
-#. After the application has been started you will see something like the below (approx. 2.5 minutes)
+#. After the application has been started you will see something like the below (approx. 2-3 minutes)
 
    .. figure:: images/8.png
 
 So the application has been started and the database can be received.
 
-.. warning::
+.. note::
     If the below error log lines are seen (**Unhandled rejection SequelizeConnectionError.....**), the database cannot be accessed. Possible first reason is that we have forgotten to change the IP address of the database, or the IP address is set wrongly. Check the IP address of the MariaDB server (via :fa:`bars` **-> Calm -> Applications -> your Application  -> Services -> MariaDB** ) and make the changes in **runapp.sh**, build the container again and start the container again.
 
     .. figure:: images/8a.png
@@ -179,7 +178,7 @@ That means the application is running as a container. BUT if you would open the 
 
 #. Use <CTRL>+C to drop back to the prompt
 #. Stop the container running ``docker stop Fiesta_App``. This will stop the container and after that remove the container from the docker engine
-#. Now using the **-p 5000:3000** parameter in the ``docker run -d --rm -p 5000:3000 --name Fiesta_App fiesta_app:1.0`` command we are telling the Docker Engine to expose port 5000 to the outside world. 
+#. Now using the **-p 5000:3000** parameter in the ``docker run -d --rm -p 5000:3000 --name Fiesta_App fiesta_app:1.0`` command we are telling the Docker Engine to expose port 5000 to the outside world and map port 5000 to port 3000 in the container. 
 #. Wait till you see the same output in the logs as you have seen earlier (from the ``docker logs --follow Fiesta_App`` command) and open a browser. URL to be used is **\http://<IP-ADDRESS-DOCKER-VM>:5000/products**. Now you should see the Fiesta App and the data from the database.
 
    .. figure:: images/9.png

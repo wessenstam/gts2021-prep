@@ -261,15 +261,15 @@ Checking the deployment
 
    .. note::
 
-      The screenshot is from the MariaDB Server, make sure you selected the FiestaApp service for its IP Address!
+      The screenshot is from the MariaDB Server, make sure you selected the right service for its IP Address!
 
-#. Open a browser and use the IP address of the FiestApp VM and port 5001. That should open a webpage of the FiestaApp. Example: **\http://10.42.37.83:5001**
+#. Open a browser and use the IP address of the FiestaApp VM and port 5001. That should open a webpage of the FiestaApp. Example: **\http://10.42.37.83:5001**
 #. Then click on **Products**. This should show a webpage wih text and some pictures. If you see that, the deployment has been successful.
 
    .. figure:: images/9.png
 
 #. Open a SSH session to the Docker VM using its IP Address you note earlier with **root** and **nutanix/4u** as the credentials
-#. Run the **mount** command you should see a line that says: **\/dev\/sdb1 on \/docker-location type ext4 (rw,relatime,seclabel,stripe=256,data=ordered)**. This is the second disk we are using for Docker specific actions
+#. Run the **mount** command you should see a line that says: **\/dev\/sdb1 on \/docker-location type ext4 (rw,realtime,seclabel,stripe=256,data=ordered)**. This is the second disk we are using for Docker specific actions
 #. Run the command **docker version** in the ssh session and look for
 
    - **Storage Driver** 
@@ -295,6 +295,7 @@ The blueprint you just deployed provides the following automated steps:
    - Used for docker actions, like build and store the build images
 
 #. Deploy the MariaDB Database for storing the needed data by the Fiesta App
+#. Register the MariaDB VM to Era (if the Era BP has been uploaded and deployed otherwise this step will not be run)
 #. Fiesta Application that will create a dynamical webpage based on the data in the MariaDB database.
 
 

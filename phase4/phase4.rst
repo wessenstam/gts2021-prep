@@ -5,7 +5,7 @@ Starting the container faster
 
 As you may have noticed it takes a while before the Fiesta_App container is up and running. The CI/CD pipeline does it work in automating the build, test, upload to our Dockerhub registry and deployment steps, but still takes a few minutes before the application is up and running and serving \HTTP requests.
 
-The reason for the time needed is that during the start of the container it has to run multiple npm commands to be ready. This part of the module is to see if we can speed this up and at the same time lower the size of the Fiesta_App image.
+The reason for the time needed is that during the start of the container it has to run multiple npm commands to become ready. This part of the module is to see if we can speed this up and at the same time lower the size of the Fiesta_App image.
 
 .. note::
    Estimated time **45 minutes**
@@ -13,20 +13,20 @@ The reason for the time needed is that during the start of the container it has 
 Multi step image build
 ----------------------
 
-To do the step up of the Fiesta Application we are going to do two things
+To do the step up of the Fiesta Application we are going to do three things
 
 #. Recreate the **dockerfile** to become a multi-step build
 #. Change the **runapp.sh** so it doesn't start all the installation steps for the Application
 #. Change the test step in **.drone.yml**
 
-.. warning::
+.. ntoe::
    Please follow the steps to the letter as they are dependent on each other. When we save a file, just save and **don't commit and/or push** the files!!
 
 Change dockerfile
 ^^^^^^^^^^^^^^^^^
 
 #. Open your VC that you used before to manipulate the **runapp.sh, .drone.yml** and the **dockerfile**
-#. Exchange all content in the dockerfile with the content below
+#. Exchange **all** content in the **dockerfile** with the content below
 
    .. code-block:: yaml
 
@@ -79,10 +79,10 @@ Change dockerfile
 Change runapp.sh
 ^^^^^^^^^^^^^^^^
 
-Now that the dockerfile is building most of the work that in earlier images have been done by the runapp.sh, we can change the file to less lines.
+Now the dockerfile is running the npm stuff compared to earlier images, this has been done by the runapp.sh. We can change the file to less lines.
 
-#. Open in your VC, runapp.sh
-#. Delete all lines from the file and copy paste the following in the file
+#. Open in your VC **runapp.sh**
+#. Delete **all** lines from the file and copy paste the following in the file
 
    .. code-block:: bash
 
@@ -120,10 +120,10 @@ Change the .drone.yml file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 #. Open the **.drone.yml** file
-#. Under the **Test local built container** section, remove the line ``- git clone https://github.com/sharonpamela/Fiesta /code/Fiesta``
+#. Under the **Test local built container** section, remove the line ``- git clone https://github.com/sharonpamela/Fiesta /code/Fiesta`` as we already took care of that in **dockerfile**. Testing this step would lead to an error.
 #. Save the file
-#. **Commit and push** the chnaged files to Gitea and look at the Drone UI to see the container being build
-#. As you can see, the build phase is taking more time as it needs to run multiple step.
+#. **Commit and push** the changed files to Gitea and look at the Drone UI to see the container being build
+#. As you can see, the build phase is taking more time as it needs to run multiple steps.
 
    .. figure:: images/1.png
 
@@ -153,7 +153,7 @@ Check the start time needed
 
    .. figure:: images/4.png
 
-#. Run the following from the command line
+#. Run the following from the command line (**make sure you use your information!!**)
 
    .. code-block:: bash
       

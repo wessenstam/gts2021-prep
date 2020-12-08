@@ -3,17 +3,16 @@
 Using the CI/CD Infrastructure
 ==============================
 
-This part of the workshop is all about using
+This part of the workshop is about
 
-- Configure the CI/CD infrastructure
-- The CI/CD infrastructure/pipeline to:
+- Configure the CI/CD infrastructure to:
 
   - Build the images and tag the images using a tag convention of <IP ADDRESS OF DOCKER VM>:<commit number>
   - Test the build images
-  - Upload the images to Dockerhub so we can have even after we have destroyed our development environment
+  - Upload the images to Dockerhub so we still have our images even after we have destroyed our development environment
   - Deploy the images as containers
 
-- Tooling
+- Use of tooling
 
 .. note::
    Estimated time **45-60 minutes**
@@ -38,7 +37,7 @@ Create a repo in Gitea
 
 Let's create a repository (repo) that we can use to store our files in from which we want to have our images/containers build.
 
-#. Open in a browser your Gitea interface (\https://<IP ADDRESS OF DOCKER VM>:3000) and login using your set credentials (workshop uses **nutanix** and **nutanix/4u**) by clicking on the Login icon (top right corner). You might be auto logged in as the token is still valid
+#. Open in a browser your Gitea interface (**\https://<IP ADDRESS OF DOCKER VM>:3000**) and login using your set credentials (workshop uses **nutanix** and **nutanix/4u**) by clicking on the Login icon (top right corner). You might be auto logged in if the token is still valid
 
 #. Click on the **+** sign in the top right hand corner and select **+New Repository**
 
@@ -50,7 +49,7 @@ Let's create a repository (repo) that we can use to store our files in from whic
    .. figure:: images/2.png
 
 #. Copy the https URL
-#. Open a command line or terminal on your laptop or Windows Tools VM and run ``git config --global http.sslVerify false``. This step is necessary otherwise git is not willing to clone anything from a Version Control Manager using Self signed certificates. In the same command line or terminal session run the following two commands ``git config --global user.name "FIRST_NAME LAST_NAME"`` and ``git config --global user.email "MY_NAME@example.com"``
+#. Open a command line or terminal on your laptop or Windows Tools VM and run ``git config --global http.sslVerify false``. This step is necessary otherwise git is not willing to clone anything from a Version Control Manager using Self signed certificates. In the same command line or terminal session run the following two commands ``git config --global user.name "FIRST_NAME LAST_NAME"`` and ``git config --global user.email "MY_NAME@example.com"`` to set the user's name and email address so all the pushes can be identified.
 
 #. On your laptop or the Windows Tools VM environment open VC, unless already open, and click **File -> New Window**
 
@@ -98,7 +97,7 @@ Let's create a repository (repo) that we can use to store our files in from whic
 
    .. figure:: images/11.png
 
-Now that we have a repo and some data in it we can configure drone to see the push and pick up the dockerfile and start running the CI/CD pipeline...
+Now that we have a repo and some data in it, we can configure drone to see the push and start running the CI/CD pipeline...
 
 ------
 
@@ -293,9 +292,9 @@ In a CI/CD pipeline testing is very important and needs to be run automatically.
           - sed -i "s/REPLACE_DB_PASSWORD/$DB_PASSWD/g" /code/Fiesta/config/config.js
           - cat /code/Fiesta/config/config.js
     
-   .. danger::
-     Make sure you have the **-name** at the same indent as the already **-name** section in the file. Otherwise you'll get an error message like below...
-     Also change the <IP ADDRESS OF MARIADB SERVER> to the correct IP address
+   .. note::
+     Make sure you have the **- name** at the same indent as the already **- name** section in the file. Otherwise you'll get an error message like below...
+     Also change the **<IP ADDRESS OF MARIADB SERVER>** to the correct IP address
 
      .. figure:: images/17.png
    
@@ -327,9 +326,9 @@ As all steps have completed successful and the output of the **config.js** file 
 Upload the images
 ^^^^^^^^^^^^^^^^^
 
-For this part of the workshop you should have a Dockerhub account created. The examples we will be using are using devnutanix as the username for Dockerhub. The user nutanix was already taken...
+For this part of the workshop you should have a Dockerhub account created. The examples we will be using are using **devnutanix** as the username for Dockerhub. The user **nutanix** was already taken...
 
-For images to be uploaded, we need to do two things, 1) We need to tag images we want to upload to dockerhub with the username (devnutanix in our example) and we need to login to docker hub before we can push images.
+For images to be uploaded, we need to do two things, 1) We need to tag images we want to upload to dockerhub with the username (**devnutanix** in our example) and we need to login to docker hub before we can push images.
 
 Manual upload of images
 ***********************
@@ -342,7 +341,7 @@ Manual upload of images
 
    .. figure:: images/20.png
 
-#. If you see the message **Login Succeeded** Docker has stored the credentials as will use them the next time you run docker login
+#. If you see the message **Login Succeeded** Docker has stored the credentials and will use them the next time you run ``docker login``
 #. Run ``docker image ls`` to get the list of images on your docker VM
 
    .. figure:: images/21.png
@@ -390,7 +389,7 @@ CI/CD Upload of images
           - docker push devnutanix/fiesta_app:latest
  
 #. Save the file. **DON'T COMMIT AND PUSH YET!!!!** we need to make a small change to Drone to make the step work
-#. As we are using the **from_secret** parameter we need to tell Drone what the secret is. Open the Drone UI (\http://<IP ADDRESS OF DOCKER VM>:8080)
+#. As we are using the **from_secret** parameter we need to tell Drone what the secret is. Open the Drone UI (**\http://<IP ADDRESS OF DOCKER VM>:8080**)
 #. Click on your **Fiesta_Application repository -> SETTINGS**
 #. Under the **Secrets** section type the following - Hit the **ADD SECRET** button after each line:
 
@@ -433,6 +432,18 @@ As we already deployed our own build Fiesta_App image in a former part of the wo
            - sleep 10
            - docker run --name Fiesta_App --rm -p 5000:3000 -d devnutanix/fiesta_app:latest
 
+   .. note::
+      The commands are there to:
+
+      - Make sure that there is no running container with the name Fiesta_App, if it is, it will stop it. Also provide some information in the console of the step in Drone
+      - Wait 10 seconds so Docker Engine can close the container
+      - Deploy the container and:
+
+        - *--name* Provide the name of the container
+        - *--rm* Remove the container if it is being stopped
+        - *-p* Open port 5000 for the outside world and map it to port 3000 on the container
+        - *-d* Run in the background as a daemon 
+
 #. Save the file, Commit and push the image
 #. This will make drone also deploy the container
 
@@ -441,7 +452,7 @@ As we already deployed our own build Fiesta_App image in a former part of the wo
 Use variables outside of the container
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-As we have now a running CI/CD pipeline that is functional, we need to start thinking about the parameters that may change during new tests or changes in the environment we use being Dev/Test or Production. Also having passwords and/or secrets in plain text is not the best idea. This means that the variables/parameters, we now have defined in the different files, need to be stored somewhere. The location where we put these variables/parameters must be used during, build, test and deploy time by the CI/CD pipeline. We already used the **Secrets** in the upload and deploy steps of Drone. So let's extend it for the images that need to be built for all variables/parameters.
+As we have now a running CI/CD pipeline that is functional, we need to start thinking about the parameters that may change during new tests. These changes can be due to the environment we use being Dev/Test or Production. Having passwords and/or secrets in plain text is not the best idea as well. This means that the variables/parameters, we now have defined in the different files, need to be stored somewhere. The location where we put these variables/parameters must be used during build, test, upload and deploy time by the CI/CD pipeline. We already used the **Secrets** in the upload and deploy steps of Drone. So let's extend it for the images that need to be built for all variables/parameters.
 
 List of variables/parameters
 ****************************
@@ -467,7 +478,7 @@ Change runapp.sh
 ****************
 
 #. Open the VC that you used to create the **runapp.sh** earlier (you should have the .drone.yml and dockerfile in the the same directory)
-#. Exchange **all** content of the file with the below content
+#. Exchange **all** content of the file with the below
 
    .. code-block:: bash
 
@@ -520,7 +531,7 @@ Change runapp.sh
       npm start
 
 #. Save the file
-#. Open the .drone.yml file and replace the content with the following
+#. Open the **.drone.yml** file and replace **all** content with the following
 
    .. code-block:: yaml
 
@@ -621,9 +632,9 @@ Change runapp.sh
 
 #. Save the file
 #. Open the Drone UI so we can set the variables/parameters we need during the different steps of the CI/CD pipeline
-#. Open under your repository click the **SETTINGS** tab
+#. Open your repository and click the **SETTINGS** tab
 #. Scroll a bit down to the **Secrets** section
-#. Create the following and their values (click the **ADD A SECRET** button to save the secret)
+#. Create the following secrets and their values (click the **ADD A SECRET** button to save the secret)
 
    - **db_server_ip** - <IP ADDRESS OF MARIADB SERVER>
    - **db_passwd** - fiesta
@@ -634,7 +645,7 @@ Change runapp.sh
    .. figure:: images/28.png
 
 #. In Drone click the **ACTIVITY FEED** text (top of the screen) to return to the activity screen
-#. Now go back to the VC UI and Commit and Push the changed files. As soon as you have done so, return to the Drone UI to see the steps being run using the created variables/parameters
+#. Now go back to the VC UI and **Commit and Push** the changed files. As soon as you have done so, return to the Drone UI to see the steps being run using the created variables/parameters
 
    .. figure:: images/29.png
 

@@ -86,6 +86,7 @@ After we have the API calls we are going to use variables to set the correct val
      .. code-block:: SSH
     
         ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCmhJS2RbHN0+Cz0ebCmpxBCT531ogxhxv8wHB+7Z1G0I77VnXfU+AA3x7u4gnjbZLeswrAyXk8Rn/wRMyJNAd7FTqrlJ0Imd4puWuE2c+pIlU8Bt8e6VSz2Pw6saBaECGc7BDDo0hPEeHbf0y0FEnY0eaG9MmWR+5SqlkepgRRKN8/ipHbi5AzsQudjZg29xra/NC/BHLAW/C+F0tE6/ghgtBKpRoj20x+7JlA/DJ/Ec3gU0AyYcvNWlhlR+qc83lXppeC1ie3eb9IDTVbCI/4dXHjdSbhTCRu0IwFIxPGK02BL5xOVTmxQyvCEOn5MSPI41YjJctUikFkMgOv2mlV root@centos
+        
 #. Click **Next**
 #. Provide the following information:
 
