@@ -210,7 +210,7 @@ Configure the blueprint
 
      .. figure:: images/5.png
 
-   - **Disk (1)** - Clone from Imagse service and **CentOS7.qcow2**
+   - **Disk (1)** - Clone from Imagse service and **CentOS_PHX_DFS**
    - **NIC 1** - **Primary** and **Dynamic** selected
    - **CONNECTION** - CentOS
 
