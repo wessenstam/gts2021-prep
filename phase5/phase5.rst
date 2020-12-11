@@ -16,6 +16,12 @@ For this part of the workshop we are going to do the following:
   
   Estimated time **45-60 minutes**
 
+
+Check Era version
+-----------------
+
+As we are using Era 2.0 version please make sure that the version of Era is 2.0.0.2. If it is not, please upgrade to this version as we have dependencies in the APIs call we are using in this part of the workshop. If you are on this version, you can proceed.
+
 Check MariaDB registration in Era
 ---------------------------------
 
