@@ -270,7 +270,7 @@ Checking the deployment
 
 #. Open a SSH session to the Docker VM using its IP Address you note earlier with **root** and **nutanix/4u** as the credentials
 #. Run the **mount** command you should see a line that says: **\/dev\/sdb1 on \/docker-location type ext4 (rw,realtime,seclabel,stripe=256,data=ordered)**. This is the second disk we are using for Docker specific actions
-#. Run the command **docker version** in the ssh session and look for
+#. Run the command **docker info** in the ssh session and look for
 
    - **Storage Driver** 
    - **Docker Root Dir**
