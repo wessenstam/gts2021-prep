@@ -1,0 +1,32 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: simpleingressroute
+  namespace: default
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`your.test.com`)
+    kind: Rule
+    services:
+    - name: npm-fiesta
+      port: 3000
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ingressroutetls
+  namespace: default
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`your.test.com`)
+    kind: Rule
+    services:
+    - name: npm-fiesta
+      port: 3000
+  tls:
+    certResolver: myresolver
