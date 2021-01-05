@@ -7,26 +7,69 @@ spec:
   entryPoints:
     - web
   routes:
-  - match: Host(`your.test.com`)
+  - match: Host(`fiesta.test.com`)
     kind: Rule
     services:
     - name: npm-fiesta
       port: 3000
 
+
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: ingressroutetls
-  namespace: default
+  name: argocd-server
+  namespace: argocd
 spec:
   entryPoints:
     - websecure
   routes:
-  - match: Host(`your.test.com`)
-    kind: Rule
-    services:
-    - name: npm-fiesta
-      port: 3000
+    - kind: Rule
+      match: Host(`argocd.test.com`)
+      priority: 10
+      services:
+        - name: argocd-server
+          port: 80
+    - kind: Rule
+      match: Host(`argocd.test.com`) && Headers(`Content-Type`, `application/grpc`)
+      priority: 11
+      services:
+        - name: argocd-server
+          port: 80
+          scheme: h2c
   tls:
     certResolver: myresolver
+    options: {}
+
+---
+
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: simpleingressroute
+  namespace: portainer
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`portainer.test.com`)
+    kind: Rule
+    services:
+    - name: portainer
+      port: 9000
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: simpleingressroute
+  namespace: monitoring
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`grafana.test.com`)
+    kind: Rule
+    services:
+    - name: grafana
+      port: 3000
