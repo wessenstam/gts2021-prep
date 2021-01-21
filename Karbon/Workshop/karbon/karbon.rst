@@ -256,12 +256,66 @@ Installation
 
 We need to provide Kubernetes specific RBAC rules so Traefik can see the new rules and be able to access the Pods we are going to have routed like our Fiesta Application. 
 
-#. Run the following command in your Terminal or Powershell session
+#. Run the following commands in your Terminal or Powershell session.
 
    .. code-block:: bash
 
       kubectl apply -f https://raw.githubusercontent.com/wessenstam/gts2021-prep/main/Karbon/yaml%20files/01-traefik-CRD.yaml
+      kubectl apply -f https://raw.githubusercontent.com/wessenstam/gts2021-prep/main/Karbon/yaml%20files/02-traefik-svc.yaml
+      kubectl apply -f https://raw.githubusercontent.com/wessenstam/gts2021-prep/main/Karbon/yaml%20files/03-traefik-Deployment.yaml
 
-      
+   .. figure:: images/13.png
 
+#. These commands have done the following
 
+   #. Create a Custom Resource Definition (CRD) including RBAC for Traefik. CRDs extend the API of Kubernetes with specfic definitions. More can be found here: https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/
+   #. Created a service of the Type LoadBalancer (use MetalLB) so we can access the Webpage over the "normal" IP addresses in the rangr we defined for MetalLB
+   #. Created the needed Pods for Traefik
+
+#. Run the following command to see the Traefik UI "public" IP addresses
+
+   .. code-block:: bash
+
+      kubectl get svc
+
+#. This should show something under the column of **EXTERNAL-IP**. 
+
+   .. figure:: images/14.png
+
+   .. note:: 
+      If you see Pending, the configuration of MetalLB has not been successful! Use **kubectl describe configmap config -n metallb-system** to see the configuration of MetalLB in the Kubernetes cluster and check the IP address range values.
+
+      .. figure:: images/15.png
+
+#. Open a browser and point to http://<EXTERNAL-IP_TRAEFIK>:8080. This should show the Traefik UI.
+
+   .. figure:: images/16.png
+
+Now that we have our LoadBalancer (MetalLB) and Ingress Controller (Traefik) running we want to have some monitoring for the system. The next part of this workshop is all about dashboards. 
+
+Dashboards
+----------
+
+There are an enormous amount of possibilities, but we'll discuss three different dashboards. The built-in Kubernetes Dashboard, Portainer and the Lens dashboard which is running on your local machine. The other two are pods inside of the Kubernetes cluster.
+
+Kubernetes Dashboard
+^^^^^^^^^^^^^^^^^^^^
+
+For the installation and exposure of this dashboard we are going to use the Load Balancer so we can access it even when Traefik, the ingress controller has some issues. This is not the most secure way of working, as we can do a lot from the dashboard with respect to manipulating the environment.
+
+#. Install the Kubernetes Dashboard using the following command
+ 
+   .. code-block:: bash
+
+      kubectl apply -f https://raw.githubusercontent.com/wessenstam/gts2021-prep/main/Karbon/yaml%20files/05-k8s-dashboard.yaml
+
+#. To see the EXTERNAL-IP so we can open the Dashboard, use the **kubectl get svc -n kubernetes-dashboard** command
+
+   .. figure:: images/17.png
+
+#. Open the browser and point it to https://<EXTERNAL-IP_DASHBOARD>/ and "bypass" the certification for your browser.
+#. In the screen that opens in the browser select Kubeconfig and point to your kubectl.cfg file you have downloaded earlier using the three dots and click the **Sign in** button. 
+
+   .. figure:: images/18.png
+
+#. 
