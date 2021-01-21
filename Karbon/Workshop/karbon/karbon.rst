@@ -401,6 +401,53 @@ As our machine has no idea where to find that machine (portainer.gts2021.local),
  
 #. Here you can open the logs und execute some commands in the Pod/Container. Maybe for some debug settings....
 
+Lens
+----
+
+Organisations might not always want to have their Kubernetes cluster to also run the monitoring solution. One way to solve this is to have an application in stalled on a machine that can "talk" to the Kubernetes cluster alike the Kubernetes Dashboard. Lens is such an application and can be downloaded at http://k8slens.dev
+
+#. Download Lens for you computer from the URL http://k8slens.dev
+#. Install the application using the default settings
+#. Lens will start after the installation is done. Click the **Ok, got it!** button to proceed
+#. Click the BIG **+** sign in the top left corner to add your cluster
+
+   .. figure:: images/26.png
+
+#. Provide the location of your kubectl.config file and click **Add cluster**
+
+   .. figure:: images/27.png
+
+#. The application is connecting to your Kubernetes cluster and is showing information on the performance
+
+   .. figure:: images/28.png
+
+#. Browse around in Lens to see if this might be something for you....
+#. Click on Worklodas -> Pods and search your traefik pod. Click on it and you'll be presented with the information for
+ 
+   - CPU
+   - Memory
+   - Network
+   - Filesystem
+
+   .. figure:: images/29.png
+
+#. If your interested in the logging of the Traefik pod, click in the right top corner on the second icon from the left (the sniplet icon).
+
+   .. figure:: images/30.png
+
+   .. figure:: images/31.png
+
+
+Now that we have an infrastructure running, can control/route URL based traffic, and we can visualize what is happening using a few dashboards, let's move into the deployment of our Fiesta App and use the MariaDB database that we provisioned earlier in the Workshop.
+
+------
+
+Takeaways
+
+- Karbon is like a normal Kubernetes cluster, all known commands to manage a native Kubernetes cluster are the same
+- As Karbon is nothing more then a way of building and maintaining a Kubernetes Cluster, all available Pods, Applications, installations and configurations are exactly the same. THere is nothing that need to be manipulated so it works with the Karbon platform
+- Building relatively quickly an infrastructure on top of Kubernetes with a choice of dashboards for basic monitoring is quite easy to setup
+
 
 
 
