@@ -318,4 +318,93 @@ For the installation and exposure of this dashboard we are going to use the Load
 
    .. figure:: images/18.png
 
-#. 
+#. You now have the opportunity to manage your Kubernetes Cluster using this dashboard. The statuses for the different Deployments, Pods and Replica Sets
+
+   .. figure:: images/19.png
+
+#. Click around to look at some items on the left side to see if you see something familiar
+
+Portainer
+^^^^^^^^^
+
+Portainer is another dashboard that, eventhough still in development, is also avaialble can be used to deploy Pods as well.
+
+#. Install the Portainer dashboard using
+
+   .. code-block:: bash
+
+      kubectl apply -f https://raw.githubusercontent.com/wessenstam/gts2021-prep/main/Karbon/yaml%20files/06-portainer.yaml
+
+#. Running the below command you will see that the Portainer service has NO EXTERNAL-IP
+
+   .. code-block:: bash
+
+      kubectl get svc -n portainer
+
+   .. figure:: images/20.png
+
+For Portainer we are going to use the Traefik Ingress Controller to "route" http://portainer.gts2021.local to the Portainer Pod via the service
+
+#. In Visual Code, create a new file and copy the below content in the file.
+
+   .. code-block:: yaml
+      
+      apiVersion: traefik.containo.us/v1alpha1
+      kind: IngressRoute
+      metadata:
+        name: simpleingressroute
+        namespace: portainer
+      spec:
+        entryPoints:
+          - web
+        routes:
+        - match: Host(`portainer.gts2021.local`)
+          kind: Rule
+          services:
+          - name: portainer
+            port: 9000
+
+#. Save the file as **traefik-routes.yaml** in the location where you also have the other yaml files.
+#. Run **kubectl apply -f traefik-routes.yaml** to have Traefik configure the route to the Portainer application.
+
+As our machine has no idea where to find that machine (portainer.gts2021.local), we need to tell it by adding the external IP address of Traefik to the hosts file. 
+
+#. Manipulate the hosts file using your tool off preference
+
+   .. note::
+      In Linux and MacOS this file is located in \/etc\/. Make sure you are using the root account or sudo to manipulate the /etc/hosts file. For Windows this file is located in **C:\Windows\System32\Drivers\etc\hosts**. To manipulate this file you MUST use notepad with evelated rights, otherwise you are not allowed to save the file.
+
+
+   .. figure:: images/21.png
+
+#. Save the file
+#. In the Terminal or Powershell session type **ping portainer.gts2021.local** and you should see that the FQDN is translated in the EXTERNAL IP address of the Traefik application and there should **NOT** be a ping reply. If the IP address not returned correct, it may be that you or 1) mistyped the line in the hosts file, or 2) forgotten to save the hosts file.
+#. Open the browser and point it to http://portainer.gts2021.local/
+
+   .. raw:: html
+
+      <font color=red><bold>Don't forget the trailing \/ ! otherwise you will not get a reply</bold></font>
+
+   .. figure:: images/23.png
+
+#. Provide the password of your choice in Portainer to go to the next screen. and click the **Create User** button
+#. Click the **Connect Button** at the left bottom corner,as *Kubernetes* has already been selected.
+#. Leave all default in the next screen and click the **Save configuration** button to start working with Portainer
+#. Browse through the dashboard and have a look around...
+#. Click on **Applications** in the left hand side and click on the 2 on the blue bar (right bottom corner) to see the rest of the Applications (Pods)
+
+   .. figure:: images/24.png
+
+#. Click on traefik and scroll down till you see the **Logs** and **Console** buttons
+
+   .. figure:: images/25.png
+ 
+#. Here you can open the logs und execute some commands in the Pod/Container. Maybe for some debug settings....
+
+
+
+
+
+
+
+
