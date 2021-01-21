@@ -1,0 +1,645 @@
+{
+    "status": {},
+    "contains_secrets": false,
+    "product_version": "3.1.1",
+    "spec": {
+        "description": "Docker build VM",
+        "resources": {
+            "client_attrs": {
+                "None": {
+                    "y": 522.5,
+                    "x": 572.5
+                },
+                "b06c06af-03a7-413d-97c5-ffcae6219de4": {
+                    "y": 147.1003911703,
+                    "x": 612.2370031755
+                },
+                "fdfc79b6-9fde-42fc-b388-9f7f0be16473": {
+                    "y": 145.5,
+                    "x": 423.5
+                },
+                "6295200f_deployment": {
+                    "y": 149.5,
+                    "x": 223.5
+                }
+            },
+            "service_definition_list": [
+                {
+                    "singleton": false,
+                    "action_list": [
+                        {
+                            "description": "System action for creating an application",
+                            "type": "system",
+                            "critical": false,
+                            "runbook": {
+                                "task_definition_list": [
+                                    {
+                                        "target_any_local_reference": {
+                                            "kind": "app_service",
+                                            "name": "MariaDB"
+                                        },
+                                        "retries": "0",
+                                        "description": "",
+                                        "child_tasks_local_reference_list": [],
+                                        "name": "21c6e337_dag",
+                                        "attrs": {
+                                            "edges": [],
+                                            "type": ""
+                                        },
+                                        "timeout_secs": "0",
+                                        "type": "DAG",
+                                        "variable_list": []
+                                    }
+                                ],
+                                "description": "",
+                                "name": "6a67a525_runbook",
+                                "main_task_local_reference": {
+                                    "kind": "app_task",
+                                    "name": "21c6e337_dag"
+                                },
+                                "variable_list": []
+                            },
+                            "name": "action_create"
+                        },
+                        {
+                            "description": "System action for deleting an application. Deletes created VMs as well",
+                            "type": "system",
+                            "critical": false,
+                            "runbook": {
+                                "task_definition_list": [
+                                    {
+                                        "target_any_local_reference": {
+                                            "kind": "app_service",
+                                            "name": "MariaDB"
+                                        },
+                                        "retries": "0",
+                                        "description": "",
+                                        "child_tasks_local_reference_list": [],
+                                        "name": "e9235a34_dag",
+                                        "attrs": {
+                                            "edges": [],
+                                            "type": ""
+                                        },
+                                        "timeout_secs": "0",
+                                        "type": "DAG",
+                                        "variable_list": []
+                                    }
+                                ],
+                                "description": "",
+                                "name": "7e1e71a7_runbook",
+                                "main_task_local_reference": {
+                                    "kind": "app_task",
+                                    "name": "e9235a34_dag"
+                                },
+                                "variable_list": []
+                            },
+                            "name": "action_delete"
+                        },
+                        {
+                            "description": "System action for starting an application",
+                            "type": "system",
+                            "critical": false,
+                            "runbook": {
+                                "task_definition_list": [
+                                    {
+                                        "target_any_local_reference": {
+                                            "kind": "app_service",
+                                            "name": "MariaDB"
+                                        },
+                                        "retries": "0",
+                                        "description": "",
+                                        "child_tasks_local_reference_list": [],
+                                        "name": "7973b2aa_dag",
+                                        "attrs": {
+                                            "edges": [],
+                                            "type": ""
+                                        },
+                                        "timeout_secs": "0",
+                                        "type": "DAG",
+                                        "variable_list": []
+                                    }
+                                ],
+                                "description": "",
+                                "name": "727370c9_runbook",
+                                "main_task_local_reference": {
+                                    "kind": "app_task",
+                                    "name": "7973b2aa_dag"
+                                },
+                                "variable_list": []
+                            },
+                            "name": "action_start"
+                        },
+                        {
+                            "description": "System action for stopping an application",
+                            "type": "system",
+                            "critical": false,
+                            "runbook": {
+                                "task_definition_list": [
+                                    {
+                                        "target_any_local_reference": {
+                                            "kind": "app_service",
+                                            "name": "MariaDB"
+                                        },
+                                        "retries": "0",
+                                        "description": "",
+                                        "child_tasks_local_reference_list": [],
+                                        "name": "29687a2c_dag",
+                                        "attrs": {
+                                            "edges": [],
+                                            "type": ""
+                                        },
+                                        "timeout_secs": "0",
+                                        "type": "DAG",
+                                        "variable_list": []
+                                    }
+                                ],
+                                "description": "",
+                                "name": "f45bb754_runbook",
+                                "main_task_local_reference": {
+                                    "kind": "app_task",
+                                    "name": "29687a2c_dag"
+                                },
+                                "variable_list": []
+                            },
+                            "name": "action_stop"
+                        },
+                        {
+                            "description": "System action for restarting an application",
+                            "type": "system",
+                            "critical": false,
+                            "runbook": {
+                                "task_definition_list": [
+                                    {
+                                        "target_any_local_reference": {
+                                            "kind": "app_service",
+                                            "name": "MariaDB"
+                                        },
+                                        "retries": "0",
+                                        "description": "",
+                                        "child_tasks_local_reference_list": [],
+                                        "name": "8c1ea319_dag",
+                                        "attrs": {
+                                            "edges": [],
+                                            "type": ""
+                                        },
+                                        "timeout_secs": "0",
+                                        "type": "DAG",
+                                        "variable_list": []
+                                    }
+                                ],
+                                "description": "",
+                                "name": "08286a9d_runbook",
+                                "main_task_local_reference": {
+                                    "kind": "app_task",
+                                    "name": "8c1ea319_dag"
+                                },
+                                "variable_list": []
+                            },
+                            "name": "action_restart"
+                        }
+                    ],
+                    "depends_on_list": [],
+                    "name": "MariaDB",
+                    "port_list": [],
+                    "tier": "",
+                    "variable_list": [],
+                    "description": ""
+                }
+            ],
+            "substrate_definition_list": [
+                {
+                    "description": "",
+                    "action_list": [],
+                    "type": "AHV_VM",
+                    "name": "MariaDB_VM",
+                    "readiness_probe": {
+                        "connection_type": "SSH",
+                        "retries": "5",
+                        "connection_protocol": "",
+                        "connection_port": 22,
+                        "address": "@@{platform.status.resources.nic_list[0].ip_endpoint_list[0].ip}@@",
+                        "delay_secs": "90",
+                        "disable_readiness_probe": false,
+                        "login_credential_local_reference": {
+                            "kind": "app_credential",
+                            "name": "CentOS"
+                        }
+                    },
+                    "editables": {
+                        "create_spec": {
+                            "resources": {
+                                "nic_list": {},
+                                "serial_port_list": {}
+                            }
+                        }
+                    },
+                    "os_type": "Linux",
+                    "create_spec": {
+                        "name": "@@{initials}@@-MariaDB_VM",
+                        "resources": {
+                            "nic_list": [
+                                {
+                                    "nic_type": "NORMAL_NIC",
+                                    "ip_endpoint_list": [],
+                                    "network_function_chain_reference": null,
+                                    "network_function_nic_type": "INGRESS",
+                                    "mac_address": "",
+                                    "subnet_reference": {
+                                        "kind": "subnet",
+                                        "type": "",
+                                        "name": "",
+                                        "uuid": "d1815121-9030-4833-82af-98def3b8d8d2"
+                                    },
+                                    "type": ""
+                                }
+                            ],
+                            "serial_port_list": [],
+                            "guest_tools": null,
+                            "num_vcpus_per_socket": 1,
+                            "num_sockets": 1,
+                            "gpu_list": [],
+                            "memory_size_mib": 2048,
+                            "parent_reference": null,
+                            "hardware_clock_timezone": "",
+                            "guest_customization": {
+                                "cloud_init": {
+                                    "meta_data": "",
+                                    "type": "",
+                                    "user_data": "#cloud-config\npreserve_hostname: false\nhostname: @@{initials}@@-mariadb-vm\nssh_pwauth: true\nusers:\n  - name: centos\n    chpasswd: { expire: False }\n    lock-passwd: false\n    plain_text_passwd: 'nutanix\/4u'\n    sudo: ['ALL=(ALL) NOPASSWD:ALL']\nruncmd:\n  - setenforce 0\n  - sed -i s\/^SELINUX=.*$\/SELINUX=disabled\/ \/etc\/selinux\/config\n  - systemctl disable firewalld\n  - systemctl stop firewalld"
+                                },
+                                "type": "",
+                                "sysprep": null
+                            },
+                            "power_state": "ON",
+                            "type": "",
+                            "account_uuid": "1da60144-6b20-4ea1-be60-cf752446d181",
+                            "boot_config": {
+                                "boot_device": {
+                                    "type": "",
+                                    "disk_address": {
+                                        "type": "",
+                                        "device_index": 0,
+                                        "adapter_type": "SCSI"
+                                    }
+                                },
+                                "type": "",
+                                "boot_type": "",
+                                "mac_address": ""
+                            },
+                            "disk_list": [
+                                {
+                                    "data_source_reference": {
+                                        "kind": "app_package",
+                                        "type": "",
+                                        "name": "CentOS_PHX_DFS",
+                                        "uuid": "f809e1f9-1069-4526-afca-b313e3a4563a"
+                                    },
+                                    "type": "",
+                                    "disk_size_mib": 0,
+                                    "volume_group_reference": null,
+                                    "device_properties": {
+                                        "type": "",
+                                        "disk_address": {
+                                            "type": "",
+                                            "device_index": 0,
+                                            "adapter_type": "SCSI"
+                                        },
+                                        "device_type": "DISK"
+                                    }
+                                }
+                            ]
+                        },
+                        "availability_zone_reference": null,
+                        "backup_policy": null,
+                        "type": "",
+                        "cluster_reference": null,
+                        "categories": ""
+                    },
+                    "variable_list": []
+                }
+            ],
+            "credential_definition_list": [
+                {
+                    "username": "root",
+                    "description": "",
+                    "type": "PASSWORD",
+                    "secret": {
+                        "attrs": {
+                            "is_secret_modified": false,
+                            "secret_reference": {}
+                        }
+                    },
+                    "name": "CentOS"
+                }
+            ],
+            "package_definition_list": [
+                {
+                    "description": "CentOS_PHX_DFS",
+                    "action_list": [],
+                    "type": "SUBSTRATE_IMAGE",
+                    "service_local_reference_list": [],
+                    "name": "CentOS_PHX_DFS",
+                    "version": "",
+                    "options": {
+                        "type": "",
+                        "name": "CentOS-PHX-DFS",
+                        "resources": {
+                            "image_type": "DISK_IMAGE",
+                            "checksum": {
+                                "checksum_algorithm": "",
+                                "type": "",
+                                "checksum_value": ""
+                            },
+                            "source_uri": "http:\/\/10.42.194.11\/workshop_staging\/CentOS7.qcow2",
+                            "version": {
+                                "product_version": "7",
+                                "type": "",
+                                "product_name": "CentOS"
+                            },
+                            "architecture": "X86_64",
+                            "type": ""
+                        },
+                        "description": ""
+                    },
+                    "variable_list": []
+                },
+                {
+                    "description": "",
+                    "action_list": [],
+                    "type": "DEB",
+                    "service_local_reference_list": [
+                        {
+                            "kind": "app_service",
+                            "name": "MariaDB"
+                        }
+                    ],
+                    "name": "Installation MariaDB",
+                    "version": "",
+                    "options": {
+                        "install_runbook": {
+                            "task_definition_list": [
+                                {
+                                    "target_any_local_reference": {
+                                        "kind": "app_package",
+                                        "name": "Installation MariaDB"
+                                    },
+                                    "retries": "0",
+                                    "description": "",
+                                    "child_tasks_local_reference_list": [
+                                        {
+                                            "kind": "app_task",
+                                            "name": "Update OS"
+                                        },
+                                        {
+                                            "kind": "app_task",
+                                            "name": "Install MariaDB"
+                                        },
+                                        {
+                                            "kind": "app_task",
+                                            "name": "Initial install MariaDB"
+                                        },
+                                        {
+                                            "kind": "app_task",
+                                            "name": "Setup FiestaDB in MariaDB"
+                                        }
+                                    ],
+                                    "name": "b3e19fac_dag",
+                                    "attrs": {
+                                        "edges": [
+                                            {
+                                                "from_task_reference": {
+                                                    "kind": "app_task",
+                                                    "name": "Update OS"
+                                                },
+                                                "edge_type": "user_defined",
+                                                "type": "",
+                                                "to_task_reference": {
+                                                    "kind": "app_task",
+                                                    "name": "Install MariaDB"
+                                                }
+                                            },
+                                            {
+                                                "from_task_reference": {
+                                                    "kind": "app_task",
+                                                    "name": "Install MariaDB"
+                                                },
+                                                "edge_type": "user_defined",
+                                                "type": "",
+                                                "to_task_reference": {
+                                                    "kind": "app_task",
+                                                    "name": "Initial install MariaDB"
+                                                }
+                                            },
+                                            {
+                                                "from_task_reference": {
+                                                    "kind": "app_task",
+                                                    "name": "Initial install MariaDB"
+                                                },
+                                                "edge_type": "user_defined",
+                                                "type": "",
+                                                "to_task_reference": {
+                                                    "kind": "app_task",
+                                                    "name": "Setup FiestaDB in MariaDB"
+                                                }
+                                            }
+                                        ],
+                                        "type": ""
+                                    },
+                                    "timeout_secs": "0",
+                                    "type": "DAG",
+                                    "variable_list": []
+                                },
+                                {
+                                    "target_any_local_reference": {
+                                        "kind": "app_service",
+                                        "name": "MariaDB"
+                                    },
+                                    "retries": "0",
+                                    "description": "",
+                                    "child_tasks_local_reference_list": [],
+                                    "name": "Update OS",
+                                    "attrs": {
+                                        "script": "#!\/bin\/bash\nhostnamectl set-hostname @@{initials}@@-mariadb-vm\necho 127.0.0.1 @@{initials}@@-mariadb-vm | tee -a \/etc\/hosts\n\n\nyum update -y\nyum upgrade -y",
+                                        "type": "",
+                                        "command_line_args": "",
+                                        "exit_status": [],
+                                        "script_type": "sh"
+                                    },
+                                    "timeout_secs": "0",
+                                    "type": "EXEC",
+                                    "variable_list": []
+                                },
+                                {
+                                    "target_any_local_reference": {
+                                        "kind": "app_service",
+                                        "name": "MariaDB"
+                                    },
+                                    "retries": "0",
+                                    "description": "",
+                                    "child_tasks_local_reference_list": [],
+                                    "name": "Install MariaDB",
+                                    "attrs": {
+                                        "script": "#!\/bin\/bash\nsudo yum install -y mariadb mariadb-server git\nsudo yum install zip unzip jq -y",
+                                        "type": "",
+                                        "command_line_args": "",
+                                        "exit_status": [],
+                                        "script_type": "sh"
+                                    },
+                                    "timeout_secs": "0",
+                                    "type": "EXEC",
+                                    "variable_list": []
+                                },
+                                {
+                                    "target_any_local_reference": {
+                                        "kind": "app_service",
+                                        "name": "MariaDB"
+                                    },
+                                    "retries": "0",
+                                    "description": "",
+                                    "child_tasks_local_reference_list": [],
+                                    "name": "Initial install MariaDB",
+                                    "attrs": {
+                                        "script": "#!\/bin\/bash\n# Get the MariaDB initial install done\nsudo \/usr\/bin\/mysql_install_db --user=mysql --ldata=\/var\/lib\/mysql\nsudo mkdir \/run\/mysqld\nsudo chown mysql:mysql \/run\/mysqld\n\n# Making sure the MariaDB starts at boot time\nsudo systemctl enable mariadb\nsudo systemctl start mariadb\n",
+                                        "type": "",
+                                        "command_line_args": "",
+                                        "exit_status": [],
+                                        "script_type": "sh"
+                                    },
+                                    "timeout_secs": "0",
+                                    "type": "EXEC",
+                                    "variable_list": []
+                                },
+                                {
+                                    "target_any_local_reference": {
+                                        "kind": "app_service",
+                                        "name": "MariaDB"
+                                    },
+                                    "retries": "0",
+                                    "description": "",
+                                    "child_tasks_local_reference_list": [],
+                                    "name": "Setup FiestaDB in MariaDB",
+                                    "attrs": {
+                                        "script": "#!\/bin\/bash\n# Get the original data from the github\nsudo mkdir \/code\nsudo git clone https:\/\/github.com\/sharonpamela\/Fiesta \/code\/Fiesta\n\n# Inject the data into the MariaDB\nsudo mysql < \/code\/Fiesta\/seeders\/FiestaDB-mySQL.sql\n\n# Getting the correct rights for the fiesta user based on the variables we need.\nsudo echo \"grant all privileges on FiestaDB.* to fiesta@'%' identified by 'fiesta';\" | sudo mysql\nsudo echo \"grant all privileges on FiestaDB.* to fiesta@localhost identified by 'fiesta';\" | sudo mysql\n\n# Changing my.cnf so MariaDB is running Binary Logs\nsudo sed -i 's\/socket=\\\/var\\\/lib\\\/mysql\\\/mysql.sock\/socket=\\\/var\\\/lib\\\/mysql\\\/mysql.sock\\nlog_bin=\\\/var\\\/log\\\/mariadb\\\/mariadb-bin.log\/g' \/etc\/my.cnf\nsudo systemctl daemon-reload\nsudo systemctl restart mariadb\n\n# Setting the Root password for mysql\nsudo mysqladmin --user=root password 'nutanix\/4u'",
+                                        "type": "",
+                                        "command_line_args": "",
+                                        "exit_status": [],
+                                        "script_type": "sh"
+                                    },
+                                    "timeout_secs": "0",
+                                    "type": "EXEC",
+                                    "variable_list": []
+                                }
+                            ],
+                            "description": "",
+                            "name": "99d6386c_runbook",
+                            "main_task_local_reference": {
+                                "kind": "app_task",
+                                "name": "b3e19fac_dag"
+                            },
+                            "variable_list": []
+                        },
+                        "type": "",
+                        "uninstall_runbook": {
+                            "task_definition_list": [
+                                {
+                                    "target_any_local_reference": {
+                                        "kind": "app_package",
+                                        "name": "Installation MariaDB"
+                                    },
+                                    "retries": "0",
+                                    "description": "",
+                                    "child_tasks_local_reference_list": [],
+                                    "name": "c2460eef_dag",
+                                    "attrs": {
+                                        "edges": [],
+                                        "type": ""
+                                    },
+                                    "timeout_secs": "0",
+                                    "type": "DAG",
+                                    "variable_list": []
+                                }
+                            ],
+                            "description": "",
+                            "name": "1ce86388_runbook",
+                            "main_task_local_reference": {
+                                "kind": "app_task",
+                                "name": "c2460eef_dag"
+                            },
+                            "variable_list": []
+                        }
+                    },
+                    "variable_list": []
+                }
+            ],
+            "app_profile_list": [
+                {
+                    "deployment_create_list": [
+                        {
+                            "type": "GREENFIELD",
+                            "action_list": [],
+                            "name": "6295200f_deployment",
+                            "min_replicas": "1",
+                            "default_replicas": "1",
+                            "depends_on_list": [],
+                            "published_service_local_reference_list": [],
+                            "max_replicas": "1",
+                            "package_local_reference_list": [
+                                {
+                                    "kind": "app_package",
+                                    "name": "Installation MariaDB"
+                                }
+                            ],
+                            "substrate_local_reference": {
+                                "kind": "app_substrate",
+                                "name": "MariaDB_VM"
+                            },
+                            "variable_list": [],
+                            "description": ""
+                        }
+                    ],
+                    "description": "",
+                    "action_list": [],
+                    "name": "Default",
+                    "variable_list": [
+                        {
+                            "val_type": "STRING",
+                            "is_mandatory": false,
+                            "description": "",
+                            "data_type": "BASE",
+                            "type": "LOCAL",
+                            "name": "initials",
+                            "value": "",
+                            "label": "",
+                            "attrs": {
+                                "type": ""
+                            },
+                            "editables": {
+                                "value": true
+                            },
+                            "is_hidden": false,
+                            "options": {
+                                "type": "PREDEFINED",
+                                "choices": []
+                            }
+                        }
+                    ]
+                }
+            ],
+            "published_service_definition_list": [],
+            "default_credential_local_reference": {
+                "kind": "app_credential",
+                "name": "CentOS"
+            },
+            "type": "USER"
+        },
+        "name": "MariaDB"
+    },
+    "api_version": "3.0",
+    "metadata": {
+        "last_update_time": "1611212854471708",
+        "kind": "blueprint",
+        "spec_version": 5,
+        "creation_time": "1611210379967851",
+        "name": "MariaDB"
+    }
+}
