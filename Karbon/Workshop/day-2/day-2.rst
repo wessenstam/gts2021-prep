@@ -273,6 +273,7 @@ We are going to do the following:
 - Create Elasticsearch environment
 - Create Kibana environment
 - Create Fluentd environment
+- Configure Traefik to alow access to the Kibana Pod
 
 Namespace
 *********
@@ -283,9 +284,112 @@ To have a logical separation of the POds we are going to create a new namespace 
 
    .. code-block:: yaml
 
-        kubectl apply -f https://
+        kubectl apply -f https://raw.githubusercontent.com/wessenstam/gts2021-prep/main/Karbon/yaml%20files/EFK%20session/kube-logging-ns.yaml
+
+#. This will create the Namespace **kube-logging**
+
+   .. figure:: images/14.png
+
+Elacsticsearch environment
+**************************
+
+To get this working we need to install a service and the deployment of the Elasticsearch environment
+
+#. Run the following commands to get the Elasticsearch environment ready
+
+   .. code-block:: yaml
+
+        kubectl apply -f https://raw.githubusercontent.com/wessenstam/gts2021-prep/main/Karbon/yaml%20files/EFK%20session/elasticsearch_svc.yaml
+        kubectl apply -f https://raw.githubusercontent.com/wessenstam/gts2021-prep/main/Karbon/yaml%20files/EFK%20session/elasticsearch_statefulset.yaml
+
+#. This will create the Namespace **Serice and Deployment**
+
+   .. figure:: images/15.png
+
+Kibana environment
+******************
+
+To get this working we need to install a service and the deployment of the Kibana environment
+
+#. Run the following commands to get the Kibana environment ready
+
+   .. code-block:: yaml
+
+        kubectl apply -f https://raw.githubusercontent.com/wessenstam/gts2021-prep/main/Karbon/yaml%20files/EFK%20session/kibana.yaml
+
+#. This will create the Namespace **Service and Deployment**
+
+   .. figure:: images/16.png
 
 
+Fluentd environment
+*******************
+
+To get this working we need to install a RBAC, Service account and the Daemonset (pods that are running on all Nodes of the Cluster) of the Fluentd environment
+
+#. Run the following commands to get the Fluentd environment ready
+
+   .. code-block:: yaml
+
+        kubectl apply -f https://raw.githubusercontent.com/wessenstam/gts2021-prep/main/Karbon/yaml%20files/EFK%20session/fluentd.yaml
+
+#. This will create the Namespace **Service and Deployment**
+
+   .. figure:: images/17.png
+
+Total overview
+**************
+
+#. To get a full overview of the Pods, in Lens change the *Namespace:* to **kube-logging**
+
+   .. figure:: images/18.png
+
+#. Now only the pods that are part of that namespace. All should have the **Running** status
+
+   .. figure:: images/19.png
+
+#. When clicking the Network -> Services you would also see the services for the same Namespace
+
+   .. figure:: images/20.png
+
+Now that we have the EFK logging environment ready, let tell Traefik to route http://kibana.gts2021.local to the Kibana interface so we can administer the logging externally from the Kubernetes cluster.
+
+Traefik configuration
+*********************
+
+#. Open the traefik-routes.yaml file and add the following to the end  of the file
+
+   .. code-block:: yaml
+
+        ---
+        apiVersion: traefik.containo.us/v1alpha1
+        kind: IngressRoute
+        metadata:
+          name: simpleingressroute
+          namespace: kube-logging
+        spec:
+          entryPoints:
+            - web
+          routes:
+          - match: Host(`kibana.gts2021.local`)
+            kind: Rule
+            services:
+            - name: kibana
+              port: 5601
+
+#. Save the file
+#. Make the changes to the **hosts** file so kibana.gts2021.local points to the External IP address of Traefik
+#. Use ``kubectl apply -f traefik-routes.yaml`` to tell Traefik to start routing the URL to the Kibana service
+#. Open the Traefik page to see that the route has been aded and is green
+
+   .. figure:: images/21.png
+
+#. Open a browser and point it to http://kibana.gts2021.local/ . The Kibana page will open
+
+   .. figure:: images/22.png
+
+#. Click the **Explore on my own** button to proceed
+#. 
 
 Backup
 ------
