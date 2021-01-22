@@ -220,11 +220,13 @@ After uploading the BP we need to configure the deployment.
 #. You can follow the process by clicking in the application (which has opened) the **Audit** tab
 #. The process will take about 5-10 minutes
 
+.. raw:: html
+
+    <center><h2 COLOR:#B0D235>That concludes this module!</H2></center>
 
 -----
 
 Now that the pre-requirements are ready, we can proceed.
-
 
 .. |proj-icon| image:: ../images/projects_icon.png
 .. |bp_icon| image:: ../images/blueprints_icon.png

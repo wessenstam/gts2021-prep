@@ -401,6 +401,8 @@ As our machine has no idea where to find that machine (portainer.gts2021.local),
  
 #. Here you can open the logs und execute some commands in the Pod/Container. Maybe for some debug settings....
 
+.. _lens:
+
 Lens
 ----
 
@@ -439,6 +441,11 @@ Organisations might not always want to have their Kubernetes cluster to also run
 
 
 Now that we have an infrastructure running, can control/route URL based traffic, and we can visualize what is happening using a few dashboards, let's move into the deployment of our Fiesta App and use the MariaDB database that we provisioned earlier in the Workshop.
+
+
+.. raw:: html
+
+   <center><h2 COLOR:#B0D235>That concludes this module!</H2></center>
 
 ------
 

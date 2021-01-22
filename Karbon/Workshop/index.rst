@@ -1,12 +1,4 @@
-.. title:: vGTS 2021 - Cloud Native applications
-
-.. toctree::
-  :maxdepth: 2
-  :caption: Build your lab environment
-  :name: _lab_env
-  :hidden:
-
-  start/start
+.. title:: vGTS 2021 - Cloud Native applications wth Karbon
 
 .. toctree::
   :maxdepth: 2
@@ -40,17 +32,7 @@
   :hidden:
   
   day-2/day-2
-
-.. toctree::
-  :maxdepth: 2
-  :caption: Backup Kubernetes
-  :name: _k8s-backup
-  :hidden:
-  
-  backup/backup
-
-
-  
+ 
 .. _getting_started:
 
 ---------------
@@ -72,10 +54,10 @@ Agenda
 - Deploy Karbon as the kubernetes platform
 - Install and configure needed components in kubernetes
 
-    - Load Balancer
-    - Ingress controller
-    - Logging
-    - Monitoring
+  - Load Balancer
+  - Ingress controller
+  - Logging
+  - Monitoring
 
 - Deploy the organisation's application
 - Change the ingress controller
