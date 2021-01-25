@@ -25,7 +25,7 @@ rules:
 ---
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
-metadata:
+metadata:var/lib/docker/contain
   name: fluentd
 roleRef:
   kind: ClusterRole
@@ -81,7 +81,7 @@ spec:
         - name: varlog
           mountPath: /var/log
         - name: varlibdockercontainers
-          mountPath: /var/lib/docker/containers
+          mountPath: /var/nutanix/docker/containers
           readOnly: true
       terminationGracePeriodSeconds: 30
       volumes:
@@ -90,4 +90,4 @@ spec:
           path: /var/log
       - name: varlibdockercontainers
         hostPath:
-          path: /var/lib/docker/containers
+          path: /var/nutanix/docker/containers
