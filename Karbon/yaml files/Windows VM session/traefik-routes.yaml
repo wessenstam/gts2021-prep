@@ -1,0 +1,63 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: simpleingressroute
+  namespace: portainer
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`portainer.gts2021.local`)
+    kind: Rule
+    services:
+    - name: portainer
+      port: 9000
+
+---
+
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: simpleingressroute
+  namespace: default
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`fiesta.gts2021.local`)
+    kind: Rule
+    services:
+    - name: npm-fiesta
+      port: 3000
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: simpleingressroute
+  namespace: monitoring
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`grafana.gts2021.local`)
+    kind: Rule
+    services:
+    - name: grafana
+      port: 3000
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: simpleingressroute
+  namespace: kube-logging
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`kibana.gts2021.local`)
+    kind: Rule
+    services:
+    - name: kibana
+      port: 5601

@@ -1,0 +1,44 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: npm-fiesta
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      run: npm-fiesta
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        run: npm-fiesta
+    spec:
+      containers:
+      - name: npm-fiesta
+        image: wessenstam/npm_fiesta
+        env:
+          - name: DB_PASSWD
+            value: fiesta
+          - name: DB_USER
+            value: fiesta
+          - name: DB_SERVER
+            value: 10.42.3.54
+          - name: DB_TYPE
+            value: mysql
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: npm-fiesta
+  namespace: default
+  labels:
+    run: npm-fiesta
+spec:
+  ports:
+  - port: 3000
+    protocol: TCP
+  selector:
+    run: npm-fiesta
