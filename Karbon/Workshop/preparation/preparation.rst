@@ -222,8 +222,8 @@ After uploading the BP we need to configure the deployment.
 
 .. raw:: html
 
-    <center><h2 COLOR:#B0D235>That concludes this module!</H2></center>
-
+    <BR><center><h2>That concludes this module!</H2></center>
+    
 -----
 
 Now that the pre-requirements are ready, we can proceed.

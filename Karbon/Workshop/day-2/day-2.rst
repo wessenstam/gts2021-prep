@@ -13,7 +13,7 @@ As we are now looking at the day-2 operations, we are going to focus on these it
 - Backup
 
 .. note::
-   Estimated time **45 minutes**
+   Estimated time **60 minutes**
 
    All screenshots have the **Downloads** folder of the logged in user as the location where we save files
 
@@ -702,6 +702,9 @@ Let's make this a more convenient solution by using Traefik.
 
    .. figure:: images/39.png
 
+K10 - Configure S3 storage
+**************************
+
 #. Make the needed change to the hosts file of your machine so you can target the host **k10.gts2021.local** as resolving to the K10 Dashboard.
 #. Open a browser and type the URL **k10.gts2021.local/k10/#/** this should open the K10 dashboard
 #. Provide some information in the first screen you get.
@@ -733,6 +736,10 @@ Let's make this a more convenient solution by using Traefik.
    .. figure:: images/43.png
 
 #. Click on the K10 Logo in the top left corner of your screen to return to the Dashboard.
+
+K10 - Configure backup policy
+*****************************
+
 #. Click in the **Applications** box, **unmanaged**
 #. In the **default** box (default namespace), click the **Create Policy** button
 
@@ -746,6 +753,85 @@ Let's make this a more convenient solution by using Traefik.
 #. Click the **Create Policy** button so we have a policy
 #. Now to run the Policy, click the **run once** button (running man icon)
 #. Click **Run Policy** to have the policy run immediate.
+#. In the Dashboard a few seconds after the policy has been in a running state, it will start to export the data to the S3 bucket we created.
+
+   .. figure:: images/46.png
+
+K10 - Restore data
+*******************
+
+Now that we have a backup and an export, let's restore some data in the form of "clone" the Pods we just backup-ed... The clone will be a separate name space.
+
+#. Click on the Application box
+#. Click on the **restore** text in the bottom area of the box called default.
+
+   .. figure:: images/47.png
+
+#. Click the first icon (from the right). That is your first manually started backup.
+#. Click the **EXPORTED** box as we want the restore to be made from our Nutanix Objects S3 storage
+#. In the **Application Name**, click the **Create na New Namespace** text and call it **default-restore**
+#. Click the **Create** button. This will set the **Application name** to the just created **default-restore**
+#. Scroll down to the Artifacts and select the **Deselect All Artifacts** text
+#. Only select (by clicking on the Checkbox) 
+
+   #. Type **deployment** that has the name **npm-fiesta** in the Name field
+   #. Type **services** that has the name **npm-fiesta** in the Name field
+
+   .. figure:: images/48.png
+
+#. Click the **Restore** button to start the restore process.
+#. Click **Restore** again in the message that appears
+#. Go back to your Dashboard, by clicking the text Dashboard at the top of your screen. You should see a Blue bar appear and rising. Also under the Actions you will see the Restore action taking place.
+
+   .. figure:: images/49.png
+
+#. Open up your Lens installation and look to see for:
+
+   #. A new name space: default-restore
+   #. In that name space: the Pod npm-fiesta in a running state.
+
+   .. figure:: images/50.png
+   .. figure:: images/50a.png
+
+.. note:: 
+   To use the "restored" Fiesta app, you can use the Traefik and change the original route to point to the restored svc, OR create a new route, like fiesta_restore. The only thing that you need to change is the parameter namespace in the traefik-routes.yaml file.
+   Apply the file using ``kubectl apply -f traefik.yaml`` and you have the restore app available for testing etc.
+
+Impact on the objects store
+***************************
+
+#. Open your bucket in Nutanix Objects via **Prism Central ->** :fa:`bars` **-> Services -> Objects -> Your Object store -> Your bucket**
+#. Click on the Performance on the right hand side and you should see the "load" the backup has had on your bucket.
+
+   .. figure:: images/51.png
+
+.. raw:: html
+
+    <BR><center><h2>That concludes this module!</H2></center>
+
+------
+
+All is working! We have deployed the following items in this part of the lab
+
+- Monitoring, not just using a Dashboard, but also having some more insights
+- Logging
+- Expand the Kubernetes cluster
+- Change the replicas AFTER we have expanded the cluster
+- Upgrade the cluster (video)
+- Defined a Nutanix Objects Bucket
+- Made changes to the built-in DNS in Kubernetes
+- Install K10 backup solution using Helm, and not YAML files
+- Configured backup policies and ran a manual triggered backup
+- Restored an application to a new namespace
+
+
+Takeaways
+---------
+
+- Monitoring and logging are crucial as it is the only way to get an overview if there are issues in an environment which consists out of small spinning wheels and the possibility of loosing the overview is at hand.
+- Expanding and upgrading the nodes in the cluster has to be just some small clicks. Organizations don;t want to much time in expanding their infrastructure as manual labor could lead to inconsistency and failure
+- Using Objects in any backup scenario is a great value add. The Objects store is build in and can be used quickly by just a few mouse clicks.
+- The used backup solution, K10 from Kasten.io, is just an example of many backup solutions out in the market, but backups are important. Things will happen. People make mistakes and they can have a very big impact on the organization. Think of the following: running the command ``kubectl delete ns default-restore`` would literally delete ALL items in that name space! If you want to rebuild everything from hand, can be done, but is taken a lot of effort as not all steps that have been run AFTER the initial deployment might be documented. Kubernetes is capable of keeping pods alive and accessible via services, but a small mistake, even typo could lead to disaster.... 
 
 
 

@@ -406,7 +406,7 @@ As our machine has no idea where to find that machine (portainer.gts2021.local),
 Lens
 ----
 
-Organisations might not always want to have their Kubernetes cluster to also run the monitoring solution. One way to solve this is to have an application in stalled on a machine that can "talk" to the Kubernetes cluster alike the Kubernetes Dashboard. Lens is such an application and can be downloaded at http://k8slens.dev
+Organizations might not always want to have their Kubernetes cluster to also run the monitoring solution. One way to solve this is to have an application in stalled on a machine that can "talk" to the Kubernetes cluster alike the Kubernetes Dashboard. Lens is such an application and can be downloaded at http://k8slens.dev
 
 #. Download Lens for you computer from the URL http://k8slens.dev
 #. Install the application using the default settings
@@ -439,13 +439,14 @@ Organisations might not always want to have their Kubernetes cluster to also run
 
    .. figure:: images/31.png
 
-
 Now that we have an infrastructure running, can control/route URL based traffic, and we can visualize what is happening using a few dashboards, let's move into the deployment of our Fiesta App and use the MariaDB database that we provisioned earlier in the Workshop.
+
+During the rest of the workshop we will be using Lens as the dashboard. Reason is that the application runs on your machine and can be integrated into any Kubernetes environment. Nothing is needed like Traefik or other LoadBalancer or means of communicating with the Cluster.
 
 
 .. raw:: html
 
-   <center><h2 COLOR:#B0D235>That concludes this module!</H2></center>
+    <BR><center><h2>That concludes this module!</H2></center>
 
 ------
 

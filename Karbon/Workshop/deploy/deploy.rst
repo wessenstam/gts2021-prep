@@ -201,7 +201,7 @@ As the application is running and accessible from our machine, we need to tell t
 
 .. raw:: html
 
-    <BR><center><h2 COLOR:#B0D235>That concludes this module!</H2></center>
+    <BR><center><h2>That concludes this module!</H2></center>
 
 
 ------
