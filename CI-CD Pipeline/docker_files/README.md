@@ -6,9 +6,6 @@ The docker-compose.yaml file builds:
 2. Gitea itself (https://gitea.io)
 3. Drone.io server (https://drone.io)
 4. Drone.io Docker runner
-5. Docker registry in http (https://docs.docker.com/registry/)
-6. Docker Registry UI using Crane (https://hub.docker.com/r/parabuzzle/craneoperator)
-7. Nginx server for HTTPS proxy for Docker Registry (https://phoenixnap.com/kb/set-up-a-private-docker-registry use `sudo yum install -y httpd-tools` to install the `htpasswd` command and https://www.rosehosting.com/blog/how-to-generate-a-self-signed-ssl-certificate-on-linux/ for SSL certs for NGINX)
 
 ## Requirements
 
@@ -43,17 +40,12 @@ The containers are using external volumes. The root is under `/gitea` and the co
 	|   |-- queues
 	|   |-- repo-avatars
 	|   `-- sessions
-	|-- haproxy
-	|   `-- ssl
-	|-- mysql
-	|   |-- gitea
-	|   |-- mysql
-	|   |-- performance_schema
-	|   `-- sys
-	|-- nginx
-	|   |-- conf.d
-	|   `-- ssl
-	`-- ssh
+	`-- mysql
+	    |-- gitea
+	    |-- mysql
+	    |-- performance_schema
+	    `-- sys
+	
 
 
 ### General changes
@@ -100,15 +92,6 @@ Make sure you save the data somewhere. As soon as you hit the **Save** button yo
 10. This will show an Warning about an application wants to open in your name, do you want to authorize or not
 11. Select the **Authorize** button and now you should see the Drone server UI
 
-### Machine that is running the containers
-
-As we are using a Registry with Self Signed Certificates we need to tell Docker to allow those certificates. To do this, create a file (if not exist) `/etc/docker/daemon.json` and add the following parameter:
-
-`{
-  "insecure-registries" : ["IP ADDRESS of the Docker VM that runs the Registry Container"]
-}`
-
-As the Nginx container is running https, we don't have to add any ports. It then defaults to HTTPS port 443.
 
 ### Your local Laptop/Machine
 The Gitea environment that we will deploy is using Self Signed Certificates. To allow git to also use this repository, provide the following commands:
